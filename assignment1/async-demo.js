@@ -1,7 +1,6 @@
 const fs = require('fs');
 const path = require('path');
 
-
 // Write a sample file for demonstration
 const filePath = path.join(__dirname, 'sample.txt');
 fs.writeFile(filePath, 'Hello async world!', 'utf8', (err) => {
@@ -11,6 +10,7 @@ fs.writeFile(filePath, 'Hello async world!', 'utf8', (err) => {
   }
   console.log('File created successfully');
 });
+
 // 1. Callback style
 fs.readFile(filePath, "utf8", (err, content) => {
   if (err) {
@@ -19,6 +19,7 @@ fs.readFile(filePath, "utf8", (err, content) => {
   }
   console.log('File content:', content);
 });
+
   // Callback hell example (test and leave it in comments):
 
 
