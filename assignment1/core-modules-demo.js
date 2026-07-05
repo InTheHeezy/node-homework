@@ -8,7 +8,14 @@ if (!fs.existsSync(sampleFilesDir)) {
 }
 
 // OS module
+const platform = os.platform();
+console.log(`Platform: ${platform}`);
 
+const cpus = os.cpus();
+console.log(`CPU: ${cpus[0].model}`);
+
+const totalMemory = os.totalmem();
+console.log(`Total Memory: ${totalMemory}`);
 
 // Path module
 
