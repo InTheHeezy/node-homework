@@ -1,5 +1,4 @@
 const fs = require('fs');
-const fsProm = require('fs').promises;
 const path = require('path');
 
 // Write a sample file for demonstration
@@ -40,9 +39,9 @@ fs.readFile(filePath, "utf8", (err, content) => {
 // Big difference is read file is inside write file.   
 
 // 2. Promise style
-fsProm.writeFile(filePath, 'Hello, async world!', 'utf8')
+fs.promises.writeFile(filePath, 'Hello, async world!', 'utf8')
   .then(() => {
-    return fsProm.readFile(filePath, 'utf8');
+    return fs.promises.readFile(filePath, 'utf8');
   })
   .then((content) =>{
     console.log('Promise style content:', content);
@@ -55,9 +54,9 @@ fsProm.writeFile(filePath, 'Hello, async world!', 'utf8')
 async function run() {
   try {
     
-    await fsProm.writeFile(filePath, 'Hello, async world!', 'utf8');
+    await fs.promises.writeFile(filePath, 'Hello, async world!', 'utf8');
 
-    const content = await fsProm.readFile(filePath, 'utf8');
+    const content = await fs.promises.readFile(filePath, 'utf8');
     console.log('Async/Await style content:', content);
 
   } catch (err) {
