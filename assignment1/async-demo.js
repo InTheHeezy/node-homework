@@ -3,7 +3,7 @@ const fsProm = require('fs').promises;
 const path = require('path');
 
 // Write a sample file for demonstration
-const filePath = path.join(__dirname, 'sample.txt');
+const filePath = path.join(__dirname, 'sample-files', 'sample.txt');
 fs.writeFile(filePath, 'Hello, async world!', 'utf8', (err) => {
   if (err) {
     console.log("Write file failed:", err.message);
