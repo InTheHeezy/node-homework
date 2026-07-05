@@ -42,7 +42,6 @@ fs.readFile(filePath, "utf8", (err, content) => {
 // 2. Promise style
 fsProm.writeFile(filePath, 'Hello, async world!', 'utf8')
   .then(() => {
-    //console.log('File created successfully (Promise)');
     return fsProm.readFile(filePath, 'utf8');
   })
   .then((content) =>{
@@ -57,7 +56,6 @@ async function run() {
   try {
     
     await fsProm.writeFile(filePath, 'Hello, async world!', 'utf8');
-    //console.log('File created successfully (Async/Await)');
 
     const content = await fsProm.readFile(filePath, 'utf8');
     console.log('Async/Await style content:', content);
