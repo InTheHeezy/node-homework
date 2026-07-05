@@ -9,16 +9,18 @@ fs.writeFile(filePath, 'Hello, async world!', 'utf8', (err) => {
     return;
   }
   console.log('File created successfully');
+
+  // 1. Callback style
+  fs.readFile(filePath, "utf8", (err, content) => {
+    if (err) {
+      console.log("File read failed:", err.message);
+      return;
+    }
+    console.log('Callback style content:', content);
+  });
 });
 
-// 1. Callback style
-fs.readFile(filePath, "utf8", (err, content) => {
-  if (err) {
-    console.log("File read failed:", err.message);
-    return;
-  }
-  console.log('Callback style content:', content);
-});
+
 
 // Callback hell example (test and leave it in comments):
 // fs.writeFile(filePath, 'Hello async world!', 'utf8', (err) => {
