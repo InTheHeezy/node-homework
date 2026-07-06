@@ -24,11 +24,16 @@ fs.writeFile(filePath, 'Hello from fs.promises!', 'utf8', (err) => {
     console.log("Write file failed:", err.message);
     return;
   }
-  console.log('File created successfully');
 });
 console.log(`Joined path: ${filePath}`);
 
 // fs.promises API
-
+fs.promises.readFile(filePath, 'utf8')
+  .then((content) => {
+    console.log(`fs.promises read: ${content}`);
+  })
+  .catch((err) => {
+    console.log(`fs.promises read failed: ${err.message}`);
+  })
 
 // Streams for large files- log first 40 chars of each chunk
