@@ -19,7 +19,7 @@ console.log(`Total Memory: ${totalMemory}`);
 
 // Path module
 const filePath = path.join(__dirname, 'sample-files', 'demo.txt');
-fs.writeFile(filePath, 'Hello, I am demo text', 'utf8', (err) => {
+fs.writeFile(filePath, 'Hello from fs.promises!', 'utf8', (err) => {
   if (err) {
     console.log("Write file failed:", err.message);
     return;
