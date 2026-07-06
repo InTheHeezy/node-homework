@@ -20,8 +20,6 @@ fs.writeFile(filePath, 'Hello, async world!', 'utf8', (err) => {
   });
 });
 
-
-
 // Callback hell example (test and leave it in comments):
 // fs.writeFile(filePath, 'Hello async world!', 'utf8', (err) => {
 //  if (err) {
