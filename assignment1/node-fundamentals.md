@@ -7,7 +7,7 @@ Node.js is a runtime environment that executes JavaScript outside a browser.
 There are a couple of differences:
 - Node does not have a HTML or DOM
 - Node can do CRUD operations to server files
-- Node runs on the compter/server directly rather than browser
+- Node runs on the computer/server directly rather than browser
 
 ## What is the V8 engine, and how does Node use it?
 V8 engine is an engine that reads JavaScript and turns it 
