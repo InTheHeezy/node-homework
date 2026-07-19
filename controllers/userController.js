@@ -56,6 +56,17 @@ function logon(req, res) {
     }
 }
 
+function logoff(req, res) {
+    try {
+        global.user_id = null;
+        res.status(200).json({
+            message: "User logged off successfully"
+        })
+    } catch(error) {
+        return res.status(500).json({ error: "Server error" })
+    }
+}
+
 module.exports = {
   register, 
   logon,
