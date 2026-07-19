@@ -20,7 +20,8 @@ function register(req, res) {
 
         return res.status(201).json({
             message: "User registered successfully",
-            user: { name: newUser.name, email: newUser.email }
+            name: newUser.name, 
+            email: newUser.email 
         });
 
     } catch(error) {
@@ -45,10 +46,11 @@ function logon(req, res) {
         } 
 
         global.user_id = validUser;
-            
+        
         return res.status(200).json({
             message: "User logged on successfully",
-            user: { name: validUser.name, email: validUser.email }
+            name: validUser.name, 
+            email: validUser.email 
         });
 
     } catch(error) {
