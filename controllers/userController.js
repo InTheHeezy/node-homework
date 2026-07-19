@@ -1,6 +1,3 @@
-global.users = global.users || [];
-global.user_id = global.user_id || null;
-
 function register(req, res) {
     try {
         const { name, email, password } = req.body;
