@@ -24,6 +24,20 @@ app.use("/", dogsRouter);// Do not remove this line
 
 app.use("/images", express.static(path.join(__dirname, "public/images")));
 
+app.use((req,res) => {
+  res.status(404).json({
+    error: "Route not found",
+    requestId: "..."
+  })
+})
+
+app.use((error, req, res, next) => {
+  res.status(500).json({
+    error: "Internal Server Error",
+    requestId: "..."
+  })
+})
+
 if (require.main === module) {
   app.listen(3000, () => {
     console.log("Dog rescue app is listening on port 3000...");
