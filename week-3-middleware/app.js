@@ -27,14 +27,14 @@ app.use("/images", express.static(path.join(__dirname, "public/images")));
 app.use((req,res) => {
   res.status(404).json({
     error: "Route not found",
-    requestId: "..."
+    requestId: req.requestId
   })
 })
 
 app.use((error, req, res, next) => {
   res.status(500).json({
     error: "Internal Server Error",
-    requestId: "..."
+    requestId: req.requestId
   })
 })
 
