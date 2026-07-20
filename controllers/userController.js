@@ -1,3 +1,6 @@
+const express = require("express");
+const router = express.Router();
+
 function register(req, res) {
     try {
         const { name, email, password } = req.body;
@@ -65,8 +68,8 @@ function logoff(req, res) {
     }
 }
 
-module.exports = {
-  register, 
-  logon,
-  logoff
-};
+router.post("/register", register);
+router.post("/logon", logon);
+router.post("/logoff", logoff);
+
+module.exports = router;
