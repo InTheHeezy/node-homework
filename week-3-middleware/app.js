@@ -7,8 +7,6 @@ const app = express();
 
 // Assignment 3b and 3c ask you to add middleware in this file.
 
-app.use(express.json());
-
 app.use((req, res, next) => {
   req.requestId = randomUUID();
   res.setHeader("x-request-id", req.requestId);
@@ -20,9 +18,11 @@ app.use((req, res, next) => {
   next();
 })
 
-app.use("/", dogsRouter);// Do not remove this line
+app.use(express.json());
 
 app.use("/images", express.static(path.join(__dirname, "public/images")));
+
+app.use("/", dogsRouter);// Do not remove this line
 
 app.use((req,res) => {
   res.status(404).json({
