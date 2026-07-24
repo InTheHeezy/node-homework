@@ -27,7 +27,7 @@ function logon(req, res) {
     );
 
     if (!validUser) {
-        return res.status(401).json({ error: "Invalid email or password"});
+        return res.status(401);
     } 
 
     global.user_id = validUser;
