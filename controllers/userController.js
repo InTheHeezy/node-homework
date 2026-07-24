@@ -16,7 +16,7 @@ function register(req, res) {
         }
 
         global.users.push(newUser)
-        global.user_id = newUser.id;
+        global.user_id = newUser;
 
         return res.status(201).json({
             name: newUser.name, 
@@ -44,7 +44,7 @@ function logon(req, res) {
             return res.status(401).json({ error: "Invalid email or password"})
         } 
 
-        global.user_id = validUser.id;
+        global.user_id = validUser;
         
         return res.status(200).json({
             name: validUser.name, 
@@ -59,7 +59,7 @@ function logon(req, res) {
 function logoff(req, res) {
     try {
         global.user_id = null;
-        res.status(200);
+        return res.status(200).json({ message: "Logged off successfully"});
     } catch(error) {
         return res.status(500).json({ error: "Server error" })
     }
