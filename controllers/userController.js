@@ -7,6 +7,7 @@ function register(req, res) {
         id,
         name,
         email,
+        password
     };
 
     global.users.push(newUser);
