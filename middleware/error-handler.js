@@ -1,5 +1,7 @@
-module.exports = function(err, req, res, next) {
+const errorHandler = (err, req, res, next) => {
    return res.status(500).json({
-      message: "Unexpected server error"
+      error: "Unexpected server error"
    });
 }
+
+module.exports = errorHandler;
