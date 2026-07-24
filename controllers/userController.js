@@ -27,7 +27,7 @@ function logon(req, res) {
     );
 
     if (!validUser) {
-        return res.status(401);
+        return res.status(401).send();
     } 
 
     global.user_id = validUser;
