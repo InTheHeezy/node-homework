@@ -26,7 +26,22 @@ async function create(req, res) {
   return res.status(201).json(sanitizedTask);
 }
 
+async function index(req, res) {
+  const userTasks = global.tasks.filter(
+    (task) => task.userId === global.user_id.email,
+  );
+
+  if(userTasks.length === 0) {
+    return res.status(404).json({ message: "No tasks found" });
+  }
+
+  const sanitizedTask = userTasks.map(({ userId, ...cleanTask }) => cleanTask);
+  
+  return res.status(200).json(sanitizedTask);
+}
+
 module.exports = {
     create,
+    index,
     taskCounter
 }
