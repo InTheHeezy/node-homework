@@ -1,4 +1,11 @@
+const { userSchema } = require("../validation/userSchema");
+
 function register(req, res) {
+
+    if (!req.body) req.body = {};
+    const { error, value } = userSchema.validate(req.body, { abortEarly: false });
+    if (error) return res.status(400).json({ message: error.message });
+
     const { name, email, password } = req.body;
 
     const id = Date.now().toString();
