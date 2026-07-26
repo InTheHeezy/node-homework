@@ -59,9 +59,31 @@ async function show(req, res) {
 
 }
 
+async function update(req, res) {
+  const { error, value } = patchTaskSchema.validate(req.body, { abortEarly: false });
+  if (error) return res.status(400).json({ message: error.message });
+
+  const taskId = parseInt(req.params.id);
+
+  if(isNaN(taskId)) return res.status(400).json({ message: "Invalid task ID format" });
+
+  const taskIndex = global.tasks.findIndex((t) => t.id === taskId && t.userId === global.user_id.email);
+
+  if(taskIndex === -1) return res.status(404).json({ message: "Task not found" });
+  
+  global.tasks[taskIndex] = {
+    ...global.tasks[taskIndex],
+    ...value
+  }
+
+  const { userId, ...sanitizedTask } = global.tasks[taskIndex];
+  return res.status(200).json(sanitizedTask);
+}
+
 module.exports = {
     create,
     index,
     show,
+    update,
     taskCounter
 }
