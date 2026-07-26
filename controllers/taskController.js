@@ -40,8 +40,28 @@ async function index(req, res) {
   return res.status(200).json(sanitizedTask);
 }
 
+async function show(req, res) {
+  const taskId = parseInt(req.params.id);
+
+  if(isNaN(taskId)) return res.status(400).json({ message: "Invalid task ID format" });
+
+  const task = global.tasks.find((t) => t.id === taskId);
+
+  if(!task) return res.status(404).json({ message: "Task not found" });
+  
+  if(task.userId !== global.user_id.email) {
+    return res.status(404).json({ message: "Unauthorized access" });
+  }
+
+  const { userId, ...sanitizedTask } = task;
+
+  return res.status(200).json(sanitizedTask);
+
+}
+
 module.exports = {
     create,
     index,
+    show,
     taskCounter
 }
