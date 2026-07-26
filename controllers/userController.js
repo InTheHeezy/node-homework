@@ -1,6 +1,22 @@
 const { userSchema } = require("../validation/userSchema");
+const crypto = require("crypto");
+const util = require("util");
+const scrypt = util.promisify(crypto.scrypt);
 
-function register(req, res) {
+async function hashPassword(password) {
+  const salt = crypto.randomBytes(16).toString("hex");
+  const derivedKey = await scrypt(password, salt, 64);
+  return `${salt}:${derivedKey.toString("hex")}`;
+}
+
+async function comparePassword(inputPassword, storedHash) {
+  const [salt, key] = storedHash.split(":");
+  const keyBuffer = Buffer.from(key, "hex");
+  const derivedKey = await scrypt(inputPassword, salt, 64);
+  return crypto.timingSafeEqual(keyBuffer, derivedKey);
+}
+
+async function register(req, res) {
 
     if (!req.body) req.body = {};
     const { error, value } = userSchema.validate(req.body, { abortEarly: false });
@@ -9,12 +25,13 @@ function register(req, res) {
     const { name, email, password } = req.body;
 
     const id = Date.now().toString();
+    const hashedPassword = await hashPassword(password);
 
     const newUser = {
         id,
         name,
         email,
-        password
+        hashedPassword
     };
 
     global.users.push(newUser);
@@ -26,22 +43,29 @@ function register(req, res) {
     });
 }
 
-function logon(req, res) {
+async function logon(req, res) {
     const { email, password } = req.body;
 
-    const validUser = global.users.find(user => 
-        user.email === email && user.password === password
+    const user = global.users.find(user => user.email);
+
+    if(!user) {
+        return res.status(401).json({ message: "Invalid email or password" });
+    }
+
+    const goodCredentials = await comparePassword(
+        password,
+        user.hashedPassword,
     );
 
-    if (!validUser) {
-        return res.status(401).json({});
-    } 
+    if(!goodCredentials) {
+        return res.status(401).json({ message: "Invalid email or password" });
+    }
 
-    global.user_id = validUser;
+    global.user_id = user;
     
     return res.status(200).json({
-        name: validUser.name, 
-        email: validUser.email 
+        name: user.name, 
+        email: user.email 
     });
 }
 
