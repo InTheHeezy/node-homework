@@ -22,7 +22,7 @@ async function register(req, res) {
     const { error, value } = userSchema.validate(req.body, { abortEarly: false });
     if (error) return res.status(400).json({ message: error.message });
 
-    const { name, email, password } = req.body;
+    const { name, email, password } = value;
 
     const id = Date.now().toString();
     const hashedPassword = await hashPassword(password);
