@@ -3,10 +3,10 @@ const taskController = require("../controllers/taskController");
 
 const router = express.Router();
 
-router.post("/api/tasks", taskController.create);
-router.get("/api/tasks", taskController.index);
-router.get("/api/tasks/:id", taskController.show);
-router.patch("/api/tasks/:id", taskController.update);
-router.delete("/api/tasks/:id", taskController.deleteTask);
+router.post("/", taskController.create);
+router.get("/", taskController.index);
+router.get("/:id", taskController.show);
+router.patch("/:id", taskController.update);
+router.delete("/:id", taskController.deleteTask);
 
 module.exports = router;
