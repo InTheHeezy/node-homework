@@ -67,13 +67,28 @@ async function update(req, res) {
 
   if(isNaN(taskId)) return res.status(400).json({ message: "Invalid task ID format" });
 
-  const task= global.tasks.find((t) => t.id === taskId && t.userId === global.user_id.email);
+  const task = global.tasks.find((t) => t.id === taskId && t.userId === global.user_id.email);
 
-  if(!taskIndex) return res.status(404).json({ message: "Task not found" });
+  if(!task) return res.status(404).json({ message: "Task not found" });
   
   Object.assign(task, value);
 
   const { userId, ...sanitizedTask } = task;
+  return res.status(200).json(sanitizedTask);
+}
+
+async function deleteTask(req, res) {
+  const taskId = parseInt(req.params.id);
+
+  if(isNaN(taskId)) return res.status(400).json({ message: "Invalid task ID format" });
+
+  const taskIndex = global.tasks.findIndex((t) => t.id === taskId && t.userId === global.user_id.email);
+
+  if(taskIndex === -1) return res.status(404).json({ message: "Task not found" });
+
+  const [deletedTask] = global.tasks.splice(taskIndex, 1);
+
+  const { userId, ...sanitizedTask } = deletedTask;
   return res.status(200).json(sanitizedTask);
 }
 
@@ -82,5 +97,6 @@ module.exports = {
     index,
     show,
     update,
+    deleteTask,
     taskCounter
 }
