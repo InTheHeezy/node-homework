@@ -67,16 +67,13 @@ async function update(req, res) {
 
   if(isNaN(taskId)) return res.status(400).json({ message: "Invalid task ID format" });
 
-  const taskIndex = global.tasks.findIndex((t) => t.id === taskId && t.userId === global.user_id.email);
+  const task= global.tasks.find((t) => t.id === taskId && t.userId === global.user_id.email);
 
-  if(taskIndex === -1) return res.status(404).json({ message: "Task not found" });
+  if(!taskIndex) return res.status(404).json({ message: "Task not found" });
   
-  global.tasks[taskIndex] = {
-    ...global.tasks[taskIndex],
-    ...value
-  }
+  Object.assign(task, value);
 
-  const { userId, ...sanitizedTask } = global.tasks[taskIndex];
+  const { userId, ...sanitizedTask } = task;
   return res.status(200).json(sanitizedTask);
 }
 
