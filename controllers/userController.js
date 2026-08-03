@@ -42,7 +42,7 @@ async function register(req, res, next) {
 
     const newUser = result.rows[0];
 
-    global.user_id = Number(user.id);
+    global.user_id = Number(newUser.id);
 
     return res.status(201).json({
         name: newUser.name, 
