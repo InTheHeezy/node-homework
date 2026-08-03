@@ -29,11 +29,14 @@ async function create(req, res) {
 }
 
 async function index(req, res) {
+  
+  const activeUserId = global.user_id?.id || global.user_id;
+
   const tasks = await pool.query(
     `SELECT id, title, is_completed 
     FROM tasks 
     WHERE user_id = $1`,
-    [global.user_id.id]
+    [activeUserId]
   )
 
   const savedTask = tasks.rows;
