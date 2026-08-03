@@ -25,14 +25,14 @@ async function register(req, res) {
 
     const { name, email, password } = value;
 
-    const hashedPassword = await hashPassword(password);
+    value.hashed_password = await hashPassword(password);
 
     let newUser = null;
     try {
         newUser = await pool.query(`INSERT INTO users (email, name, hashedPassowrd) 
             VALUES ($1, $2, $3)
             RETURNING id, email, name`,
-            [value.email, value.name. value.hashedPassword]
+            [value.email, value.name. value.hashed_Password]
         );
     } catch (e) {
         if (e.code === "23505") return res.status(400).json({ message: "Unique constraint for email was violatied" });
