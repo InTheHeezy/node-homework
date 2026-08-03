@@ -124,5 +124,4 @@ module.exports = {
     show,
     update,
     deleteTask,
-    taskCounter
 }
