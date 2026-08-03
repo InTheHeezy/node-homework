@@ -66,18 +66,23 @@ async function update(req, res) {
   const { error, value } = patchTaskSchema.validate(req.body, { abortEarly: false });
   if (error) return res.status(400).json({ message: error.message });
 
-  const taskId = parseInt(req.params.id);
+  let keys = Object.keys(value);
+  keys = keys.map((key) => key === "isCompleted" ? "is_completed" : key);
+  const setClauses = keys.map((key, i) => `${key} = $${i + 1}`).join(", ");
+  const idParm = `$${keys.length + 1}`;
+  const userParm = `$${keys.length + 2}`;
+  const updatedTask = await pool.query(
+    `UPDATE tasks SET ${setClauses} 
+    WHERE id = ${idParm} AND user_id = ${userParm} RETURNING id, title, is_completed`, 
+    [...Object.values(taskChange), req.params.id, global.user_id]
+  );
 
-  if(isNaN(taskId)) return res.status(400).json({ message: "Invalid task ID format" });
+  if(updatedTask.rows.length === 0) {
+    return res.status(404).json({ message: "Task not found" });
+  }
 
-  const task = global.tasks.find((t) => t.id === taskId && t.userId === global.user_id.email);
-
-  if(!task) return res.status(404).json({ message: "Task not found" });
-  
-  Object.assign(task, value);
-
-  const { userId, ...sanitizedTask } = task;
-  return res.status(200).json(sanitizedTask);
+  const updatedTask = result.rows[0];
+  return res.status(200).json(updatedTask);
 }
 
 async function deleteTask(req, res) {
