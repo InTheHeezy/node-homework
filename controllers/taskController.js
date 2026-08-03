@@ -74,7 +74,7 @@ async function update(req, res) {
   const { error, value } = patchTaskSchema.validate(req.body, { abortEarly: false });
   if (error) return res.status(400).json({ message: error.message });
 
-  
+  const activeUserId = global.user_id;
 
   let keys = Object.keys(value);
   keys = keys.map((key) => key === "isCompleted" ? "is_completed" : key);
@@ -85,7 +85,7 @@ async function update(req, res) {
     `UPDATE tasks SET ${setClauses} 
     WHERE id = ${idParm} AND user_id = ${userParm} 
     RETURNING id, title, is_completed`, 
-    [...Object.values(taskChange), req.params.id, global.user_id]
+    [...Object.values(value), req.params.id, activeUserId]
   );
 
   if(result.rows.length === 0) {
