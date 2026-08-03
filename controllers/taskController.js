@@ -14,7 +14,7 @@ async function create(req, res) {
   const { error, value } = taskSchema.validate(req.body, { abortEarly: false });
   if (error) return res.status(400).json({ message: error.message });
 
-  const activeUserId = global.user_id;
+  const activeUserId = global.user_id?.id || global.user_id;
 
   const task = await pool.query(
     `INSERT INTO tasks (title, is_completed, user_id) 
@@ -30,7 +30,7 @@ async function create(req, res) {
 
 async function index(req, res) {
   
-  const activeUserId = global.user_id;
+  const activeUserId = global.user_id?.id || global.user_id;
 
   const tasks = await pool.query(
     `SELECT id, title, is_completed 
@@ -53,7 +53,7 @@ async function show(req, res) {
 
   if(isNaN(taskId)) return res.status(400).json({ message: "Invalid task ID format" });
 
-  const activeUserId = global.user_id;
+  const activeUserId = global.user_id?.id || global.user_id;
 
   const result = await pool.query(
     `SELECT id, title, is_completed
@@ -74,7 +74,7 @@ async function update(req, res) {
   const { error, value } = patchTaskSchema.validate(req.body, { abortEarly: false });
   if (error) return res.status(400).json({ message: error.message });
 
-  const activeUserId = global.user_id;
+  const activeUserId = global.user_id?.id || global.user_id;
 
   let keys = Object.keys(value);
   keys = keys.map((key) => key === "isCompleted" ? "is_completed" : key);
@@ -101,7 +101,7 @@ async function deleteTask(req, res) {
 
   if(isNaN(taskId)) return res.status(400).json({ message: "Invalid task ID format" });
 
-  const activeUserId = global.user_id;
+  const activeUserId = global.user_id?.id || global.user_id;
 
   const result = await pool.query(
     `DELETE FROM tasks
