@@ -66,6 +66,10 @@ async function show(req, res) {
 }
 
 async function update(req, res) {
+
+  const taskId = parseInt(req.params.id);
+  if (isNaN(taskId)) return res.status(400).json({ message: "Invalid task ID format" });
+
   const { error, value } = patchTaskSchema.validate(req.body, { abortEarly: false });
   if (error) return res.status(400).json({ message: error.message });
 
@@ -81,7 +85,7 @@ async function update(req, res) {
     `UPDATE tasks SET ${setClauses} 
     WHERE id = ${idParm} AND user_id = ${userParm} 
     RETURNING id, title, is_completed`, 
-    [...Object.values(value), req.params.id, activeUserId]
+    [...Object.values(value), taskId, activeUserId]
   );
 
   if(result.rows.length === 0) {
