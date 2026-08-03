@@ -48,17 +48,18 @@ async function show(req, res) {
 
   if(isNaN(taskId)) return res.status(400).json({ message: "Invalid task ID format" });
 
-  const task = global.tasks.find((t) => t.id === taskId);
+  const result = await pool.query(
+    `SELECT id, title, is_completed
+    FROM TASKS
+    WHERE id = $1 AND user_id = $2`,
+    [taskId, global.user_id.id]
+  );
 
-  if(!task) return res.status(404).json({ message: "Task not found" });
+  if(result.rows.length === 0) return res.status(404).json({ message: "Task not found" });
   
-  if(task.userId !== global.user_id.email) {
-    return res.status(404).json({ message: "Unauthorized access" });
-  }
+  const showTask = result.row[0];
 
-  const { userId, ...sanitizedTask } = task;
-
-  return res.status(200).json(sanitizedTask);
+  return res.status(200).json(showTask);
 
 }
 
