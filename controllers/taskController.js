@@ -43,10 +43,6 @@ async function index(req, res) {
 
   const savedTask = tasks.rows;
 
-  if(savedTask.length === 0) {
-    return res.status(404).json({ message: "No tasks found" });
-  }
-
   return res.status(200).json(savedTask);
 }
 
@@ -80,7 +76,7 @@ async function update(req, res) {
 
   let keys = Object.keys(value);
   keys = keys.map((key) => key === "isCompleted" ? "is_completed" : key);
-  
+
   const setClauses = keys.map((key, i) => `${key} = $${i + 1}`).join(", ");
   const idParm = `$${keys.length + 1}`;
   const userParm = `$${keys.length + 2}`;
