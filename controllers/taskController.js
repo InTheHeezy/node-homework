@@ -14,11 +14,13 @@ async function create(req, res) {
   const { error, value } = taskSchema.validate(req.body, { abortEarly: false });
   if (error) return res.status(400).json({ message: error.message });
 
+  const activeUserId = global.user_id?.id || global.user_id;
+
   const task = await pool.query(
     `INSERT INTO tasks (title, is_completed, user_id) 
     VALUES ( $1, $2, $3 ) 
     RETURNING id, title, is_completed`,
-    [value.title, value.is_completed, global.user_id.id]
+    [value.title, value.is_completed ?? false, activeUserId]
   );
 
   const savedTask = task.rows[0];
