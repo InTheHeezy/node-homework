@@ -35,7 +35,7 @@ async function register(req, res) {
             [value.email, value.name. value.hashed_Password]
         );
     } catch (e) {
-        if (e.code === "23505") return res.status(400).json({ message: "Unique constraint for email was violatied" });
+        if (e.code === "23505") return res.status(400).json({ message: "Unique constraint for email was violated" });
         return next(e);
     }
 
