@@ -43,6 +43,10 @@ async function index(req, res) {
 
   const savedTask = tasks.rows;
 
+  if (savedTask.length === 0) {
+    return res.status(404).json(savedTask);
+  }
+
   return res.status(200).json(savedTask);
 }
 
