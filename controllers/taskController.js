@@ -60,8 +60,9 @@ async function show(req, res) {
     [taskId, activeUserId]
   );
 
-  if(result.rows.length === 0) return res.status(404).json({ message: "Task not found" });
-  
+  if(result.rows.length === 0) {
+    return res.status(404).json({ message: "Task not found" });
+  }
   const showTask = result.rows[0];
 
   return res.status(200).json(showTask);
@@ -109,8 +110,9 @@ async function deleteTask(req, res) {
     [taskId, activeUserId]
   );
 
-  if(result.rows.length === 0) return res.status(404).json({ message: "Task not found" });
-
+  if(result.rows.length === 0) {
+    return res.status(404).json({ message: "Task not found" });
+  }
   const deletedTask = result.rows[0];
 
   return res.status(200).json(deletedTask);
