@@ -72,14 +72,14 @@ async function update(req, res) {
   const setClauses = keys.map((key, i) => `${key} = $${i + 1}`).join(", ");
   const idParm = `$${keys.length + 1}`;
   const userParm = `$${keys.length + 2}`;
-  const updatedTask = await pool.query(
+  const result = await pool.query(
     `UPDATE tasks SET ${setClauses} 
     WHERE id = ${idParm} AND user_id = ${userParm} 
     RETURNING id, title, is_completed`, 
     [...Object.values(taskChange), req.params.id, global.user_id]
   );
 
-  if(updatedTask.rows.length === 0) {
+  if(result.rows.length === 0) {
     return res.status(404).json({ message: "Task not found" });
   }
 
