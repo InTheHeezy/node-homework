@@ -57,7 +57,7 @@ async function show(req, res) {
   );
 
   if(result.rows.length === 0) {
-    return res.status(404).json({ message: "Task not found" });
+    return res.status(404).json({ error: "Not Found" });
   }
   const showTask = result.rows[0];
 
@@ -89,7 +89,7 @@ async function update(req, res) {
   );
 
   if(result.rows.length === 0) {
-    return res.status(404).json({ message: "Task not found" });
+    return res.status(404).json({ error: "Not Found" });
   }
 
   const updatedTask = result.rows[0];
@@ -111,7 +111,7 @@ async function deleteTask(req, res) {
   );
 
   if(result.rows.length === 0) {
-    return res.status(404).json({ message: "Task not found" });
+    return res.status(404).json({ error: "Not Found" });
   }
   const deletedTask = result.rows[0];
 
