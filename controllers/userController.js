@@ -68,7 +68,7 @@ async function logon(req, res) {
         return res.status(401).json({ message: "Invalid email or password" });
     }
 
-    global.user_id = user;
+    global.user_id = Number(user.id);
     
     return res.status(200).json({
         name: user.name, 
