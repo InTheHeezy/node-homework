@@ -25,23 +25,22 @@ async function register(req, res, next) {
 
     const { name, email, password } = value;
 
-    value.hashed_password = await hashPassword(password);
+    hashedPassword = await hashPassword(password);
 
-    let newUser = null;
+    let result = null;
     try {
-        newUser = await pool.query(
-            `INSERT INTO users (email, name, hashedPassowrd) 
+        result = await pool.query(
+            `INSERT INTO users (email, name, hashed_password) 
             VALUES ($1, $2, $3)
             RETURNING id, email, name`,
-            [value.email, value.name. value.hashed_Password]
+            [email, name, hashPassword]
         );
     } catch (e) {
         if (e.code === "23505") return res.status(400).json({ message: "Unique constraint for email was violated" });
         return next(e);
     }
 
-    // global.users.push(newUser);
-    // global.user_id = newUser;
+    const newUser = result.rows[0];
 
     return res.status(201).json({
         name: newUser.name, 
@@ -62,7 +61,7 @@ async function logon(req, res) {
 
     const goodCredentials = await comparePassword(
         password,
-        user.hashedPassword,
+        user.hashed_password,
     );
 
     if(!goodCredentials) {
