@@ -29,7 +29,8 @@ async function register(req, res) {
 
     let newUser = null;
     try {
-        newUser = await pool.query(`INSERT INTO users (email, name, hashedPassowrd) 
+        newUser = await pool.query(
+            `INSERT INTO users (email, name, hashedPassowrd) 
             VALUES ($1, $2, $3)
             RETURNING id, email, name`,
             [value.email, value.name. value.hashed_Password]
