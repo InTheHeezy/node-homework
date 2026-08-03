@@ -53,16 +53,18 @@ async function show(req, res) {
 
   if(isNaN(taskId)) return res.status(400).json({ message: "Invalid task ID format" });
 
+  const activeUserId = global.user_id?.id || global.user_id;
+
   const result = await pool.query(
     `SELECT id, title, is_completed
     FROM TASKS
     WHERE id = $1 AND user_id = $2`,
-    [taskId, global.user_id.id]
+    [taskId, activeUserId]
   );
 
   if(result.rows.length === 0) return res.status(404).json({ message: "Task not found" });
   
-  const showTask = result.row[0];
+  const showTask = result.rows[0];
 
   return res.status(200).json(showTask);
 
