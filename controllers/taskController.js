@@ -91,14 +91,18 @@ async function deleteTask(req, res) {
 
   if(isNaN(taskId)) return res.status(400).json({ message: "Invalid task ID format" });
 
-  const taskIndex = global.tasks.findIndex((t) => t.id === taskId && t.userId === global.user_id.email);
+  const result = await pool.query(
+    `DELETE FROM tasks
+    WHERE id = $1 AND user_id = $2
+    RETURNING id, title`,
+    [taskId, global.user_id.id]
+  );
 
-  if(taskIndex === -1) return res.status(404).json({ message: "Task not found" });
+  if(result.rows.length === 0) return res.status(404).json({ message: "Task not found" });
 
-  const [deletedTask] = global.tasks.splice(taskIndex, 1);
+  const deletedTask = result.rows[0];
 
-  const { userId, ...sanitizedTask } = deletedTask;
-  return res.status(200).json(sanitizedTask);
+  return res.status(200).json(deletedTask);
 }
 
 module.exports = {
