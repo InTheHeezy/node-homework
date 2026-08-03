@@ -25,7 +25,7 @@ async function register(req, res, next) {
 
     const { name, email, password } = value;
 
-    hashedPassword = await hashPassword(password);
+    const hashedPassword = await hashPassword(password);
 
     let result = null;
     try {
