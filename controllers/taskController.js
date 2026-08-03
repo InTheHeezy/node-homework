@@ -101,11 +101,13 @@ async function deleteTask(req, res) {
 
   if(isNaN(taskId)) return res.status(400).json({ message: "Invalid task ID format" });
 
+  const activeUserId = global.user_id;
+
   const result = await pool.query(
     `DELETE FROM tasks
     WHERE id = $1 AND user_id = $2
     RETURNING id, title`,
-    [taskId, global.user_id.id]
+    [taskId, activeUserId]
   );
 
   if(result.rows.length === 0) return res.status(404).json({ message: "Task not found" });
