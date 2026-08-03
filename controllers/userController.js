@@ -33,7 +33,7 @@ async function register(req, res, next) {
             `INSERT INTO users (email, name, hashed_password) 
             VALUES ($1, $2, $3)
             RETURNING id, email, name`,
-            [email, name, hashPassword]
+            [email, name, hashedPassword]
         );
     } catch (e) {
         if (e.code === "23505") return res.status(400).json({ message: "Unique constraint for email was violated" });
