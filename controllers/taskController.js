@@ -16,11 +16,13 @@ async function create(req, res) {
 
   const activeUserId = global.user_id;
 
+  const isCompletedValue = value.isCompleted ?? false;
+
   const task = await pool.query(
     `INSERT INTO tasks (title, is_completed, user_id) 
     VALUES ( $1, $2, $3 ) 
     RETURNING id, title, is_completed`,
-    [value.title, value.is_completed ?? false, activeUserId]
+    [value.title, isCompletedValue, activeUserId]
   );
 
   const savedTask = task.rows[0];
@@ -78,6 +80,7 @@ async function update(req, res) {
 
   let keys = Object.keys(value);
   keys = keys.map((key) => key === "isCompleted" ? "is_completed" : key);
+  
   const setClauses = keys.map((key, i) => `${key} = $${i + 1}`).join(", ");
   const idParm = `$${keys.length + 1}`;
   const userParm = `$${keys.length + 2}`;
