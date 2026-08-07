@@ -26,3 +26,5 @@ package-lock.json
 # ===========================================
 check-db.js
 clearTestDatabase.js
+
+/generated/prisma
