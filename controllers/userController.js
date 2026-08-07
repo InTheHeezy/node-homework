@@ -36,7 +36,7 @@ async function register(req, res, next) {
             [email, name, hashedPassword]
         );
     } catch (e) {
-        if (e.code === "23505") return res.status(400).json({ message: "Unique constraint for email was violated" });
+        if (e.code === "23505") return res.status(400).json({ message: "An account with this email address already exists." });
         return next(e);
     }
 
