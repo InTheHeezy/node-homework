@@ -3,6 +3,7 @@ const crypto = require("crypto");
 const util = require("util");
 const scrypt = util.promisify(crypto.scrypt);
 const pool = require("../db/pg-pool");
+const prisma = require("../db/prisma");
 
 async function hashPassword(password) {
   const salt = crypto.randomBytes(16).toString("hex");
@@ -53,9 +54,17 @@ async function register(req, res, next) {
 async function logon(req, res) {
     const { email, password } = req.body;
 
-    const result = await pool.query("SELECT * FROM users WHERE email = $1", [email]);
+    const cleanEmail = email.toLowerCase();
 
-    const user = result.rows[0];
+    //const result = await pool.query("SELECT * FROM users WHERE email = $1", [email]);
+
+    //const user = result.rows[0];
+
+    const user = await prisma.user.findUnique({ 
+        where: { 
+            email : cleanEmail 
+        }
+    });
 
     if(!user) {
         return res.status(401).json({ message: "Invalid email or password" });
