@@ -30,15 +30,17 @@ async function register(req, res, next) {
 
     let result = null;
     try {
-        result = await pool.query(
-            `INSERT INTO users (email, name, hashed_password) 
-            VALUES ($1, $2, $3)
-            RETURNING id, email, name`,
-            [email, name, hashedPassword]
-        );
+        result = await prisma.user.create({
+            data: { name, email, hashed_password : hashedPassword},
+            select: { name: true, email: true, id: true} //specify the column values to return
+        });
+        return res.status(201).json(result);
     } catch (e) {
-        if (e.code === "23505") return res.status(400).json({ message: "An account with this email address already exists." });
-        return next(e);
+        if (e.name === "PrismaClientKnownRequestError" && e.code === "P2002"){
+           return res.status(400).json({ message: "An account with this email address already exists." }); 
+        } else {
+           return next(e); 
+        }
     }
 
     const newUser = result.rows[0];
