@@ -2,7 +2,6 @@ const { userSchema } = require("../validation/userSchema");
 const crypto = require("crypto");
 const util = require("util");
 const scrypt = util.promisify(crypto.scrypt);
-const pool = require("../db/pg-pool");
 const prisma = require("../db/prisma");
 
 async function hashPassword(password) {
@@ -54,10 +53,6 @@ async function logon(req, res) {
     const { email, password } = req.body;
 
     const cleanEmail = email.toLowerCase();
-
-    //const result = await pool.query("SELECT * FROM users WHERE email = $1", [email]);
-
-    //const user = result.rows[0];
 
     const user = await prisma.user.findUnique({ 
         where: { 
