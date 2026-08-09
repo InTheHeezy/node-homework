@@ -4,7 +4,6 @@ const notFound = require("./middleware/not-found");
 const errorHandler = require("./middleware/error-handler");
 const authMiddleware = require("./middleware/auth");
 const taskRouter = require("./routes/taskRoutes");
-const pool = require("./db/pg-pool");
 const prisma = require("./db/prisma");
 
 const app = express();
@@ -38,8 +37,6 @@ const handleShutdown = async () => {
   console.log("Shutting down server...");
   server.close(async () => {
     try {
-      await pool.end();
-      console.log("Database pool has ended.");
       await prisma.$disconnect();
       console.log("Prisma disconnected");
       process.exit(0);
