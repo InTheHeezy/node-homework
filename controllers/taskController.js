@@ -60,24 +60,47 @@ async function index(req, res) {
   return res.status(200).json(tasks);
 }
 
-async function show(req, res) {
+async function show(req, res, next) {
+  
   const taskId = parseInt(req.params.id);
-
   if(isNaN(taskId)) return res.status(400).json({ message: "Invalid task ID format" });
 
   const activeUserId = global.user_id;
 
-  const result = await pool.query(
-    `SELECT id, title, is_completed
-    FROM TASKS
-    WHERE id = $1 AND user_id = $2`,
-    [taskId, activeUserId]
-  );
-
-  if(result.rows.length === 0) {
-    return res.status(404).json({ error: "Not Found" });
+  try {
+    const task = prisma.task.findUnique({
+      where: {
+        id_user_id: {
+          id: taskId,
+          user_id: activeUserId
+        }
+      },
+      select: {
+        id: true,
+        title: true,
+        is_completed: true
+      }
+    });
+    return res.status(200).json(task);
+  } catch (err) {
+    if (err.code === "P2025" ) {
+      return res.status(404).json({ message: "The task was not found."})
+    } else {
+      return next(err); // pass other errors to the global error handler
+    }
   }
-  const showTask = result.rows[0];
+
+  // const result = await pool.query(
+  //   `SELECT id, title, is_completed
+  //   FROM TASKS
+  //   WHERE id = $1 AND user_id = $2`,
+  //   [taskId, activeUserId]
+  // );
+
+  // if(result.rows.length === 0) {
+  //   return res.status(404).json({ error: "Not Found" });
+  // }
+  // const showTask = result.rows[0];
 
   return res.status(200).json(showTask);
 
@@ -98,7 +121,6 @@ async function update(req, res, next) {
   if (value.title !== undefined) updateData.title = value.title;
   if (value.isCompleted !== undefined) updateData.is_completed = value.isCompleted;
 
-  let updatedTask = null;
   try {
     const updatedTask = await prisma.task.update({
       data: updateData,
