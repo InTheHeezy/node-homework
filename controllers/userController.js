@@ -19,8 +19,7 @@ async function comparePassword(inputPassword, storedHash) {
 }
 
 async function register(req, res) {
-
-    if (!req.body) req.body = {};
+    //if (!req.body) req.body = {};
     const { error, value } = userSchema.validate(req.body, { abortEarly: false });
     if (error) return res.status(400).json({ message: error.message });
 
