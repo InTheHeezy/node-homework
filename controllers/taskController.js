@@ -144,26 +144,49 @@ async function update(req, res, next) {
   }
 }
 
-async function deleteTask(req, res) {
+async function deleteTask(req, res, next) {
+  
   const taskId = parseInt(req.params.id);
-
   if(isNaN(taskId)) return res.status(400).json({ message: "Invalid task ID format" });
 
   const activeUserId = global.user_id;
 
-  const result = await pool.query(
-    `DELETE FROM tasks
-    WHERE id = $1 AND user_id = $2
-    RETURNING id, title`,
-    [taskId, activeUserId]
-  );
-
-  if(result.rows.length === 0) {
-    return res.status(404).json({ error: "Not Found" });
+  try {
+    const deletedTask = await prisma.task.delete({
+      where: {
+        id_user_id: {
+          id: taskId,
+          user_id: activeUserId
+        }
+      },
+      select: { 
+        id: true, 
+        title: true, 
+        is_completed: true, 
+      }
+    });
+    return res.status(200).json(deletedTask);
+  } catch (err) {
+    if (err.code === "P2025" ) {
+      return res.status(404).json({ message: "The task was not found."})
+    } else {
+      return next(err); // pass other errors to the global error handler
+    }
   }
-  const deletedTask = result.rows[0];
 
-  return res.status(200).json(deletedTask);
+  // const result = await pool.query(
+  //   `DELETE FROM tasks
+  //   WHERE id = $1 AND user_id = $2
+  //   RETURNING id, title`,
+  //   [taskId, activeUserId]
+  // );
+
+  // if(result.rows.length === 0) {
+  //   return res.status(404).json({ error: "Not Found" });
+  // }
+  // const deletedTask = result.rows[0];
+
+  // return res.status(200).json(deletedTask);
 }
 
 module.exports = {
