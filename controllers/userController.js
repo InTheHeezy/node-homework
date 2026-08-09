@@ -18,7 +18,7 @@ async function comparePassword(inputPassword, storedHash) {
   return crypto.timingSafeEqual(keyBuffer, derivedKey);
 }
 
-async function register(req, res, next) {
+async function register(req, res) {
 
     if (!req.body) req.body = {};
     const { error, value } = userSchema.validate(req.body, { abortEarly: false });
@@ -28,9 +28,9 @@ async function register(req, res, next) {
 
     const hashedPassword = await hashPassword(password);
 
-    let result = null;
+    let user = null;
     try {
-        result = await prisma.user.create({
+        user = await prisma.user.create({
             data: { 
                 name, 
                 email, 
@@ -42,7 +42,7 @@ async function register(req, res, next) {
                 email: true 
             } //specify the column values to return
         });
-        return res.status(201).json(result);
+        return res.status(201).json(user);
     } catch (e) {
         if (e.name === "PrismaClientKnownRequestError" && e.code === "P2002"){
            return res.status(400).json({ message: "An account with this email address already exists." }); 
@@ -50,15 +50,6 @@ async function register(req, res, next) {
            return next(e); 
         }
     }
-
-    const newUser = result.rows[0];
-
-    global.user_id = Number(newUser.id);
-
-    return res.status(201).json({
-        name: newUser.name, 
-        email: newUser.email 
-    });
 }
 
 async function logon(req, res) {
