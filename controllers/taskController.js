@@ -3,24 +3,37 @@ const pool = require("../db/pg-pool");
 const prisma = require("../db/prisma");
 
 async function create(req, res) {
-  if (!req.body) req.body = {};
+  //if (!req.body) req.body = {};
   const { error, value } = taskSchema.validate(req.body, { abortEarly: false });
   if (error) return res.status(400).json({ message: error.message });
 
   const activeUserId = global.user_id;
-
+  
   const isCompletedValue = value.isCompleted ?? false;
 
-  const task = await pool.query(
-    `INSERT INTO tasks (title, is_completed, user_id) 
-    VALUES ( $1, $2, $3 ) 
-    RETURNING id, title, is_completed`,
-    [value.title, isCompletedValue, activeUserId]
-  );
+  const newTask = await prisma.task.create({
+    data: { 
+      title : value.title, 
+      is_completed : isCompletedValue, 
+      user_id : activeUserId 
+    },
+    select: {
+      id: true,  
+      title: true, 
+      is_completed: true 
+    }
+  });
+ 
+  // const task = await pool.query(
+  //   `INSERT INTO tasks (title, is_completed, user_id) 
+  //   VALUES ( $1, $2, $3 ) 
+  //   RETURNING id, title, is_completed`,
+  //   [value.title, isCompletedValue, activeUserId]
+  // );
 
-  const savedTask = task.rows[0];
+  //const savedTask = task.rows[0];
 
-  return res.status(201).json(savedTask);
+  return res.status(201).json(newTask);
 }
 
 async function index(req, res) {
@@ -32,9 +45,9 @@ async function index(req, res) {
     user_id: global.user_id, // only the tasks for this user!
   },
   select: { 
+    id: true, 
     title: true, 
-    is_completed: true, 
-    id: true 
+    is_completed: true
   }
 });
 
