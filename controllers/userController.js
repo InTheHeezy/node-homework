@@ -27,9 +27,8 @@ async function register(req, res) {
 
     const hashedPassword = await hashPassword(password);
 
-    let user = null;
     try {
-        user = await prisma.user.create({
+        const user = await prisma.user.create({
             data: { 
                 name, 
                 email, 
