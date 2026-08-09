@@ -22,7 +22,11 @@ async function create(req, res) {
       is_completed: true 
     }
   });
-  return res.status(201).json(newTask);
+  return res.status(201).json({
+    id: newTask.id,
+    title: newTask.title,
+    isCompleted: newTask.is_completed
+  });
 }
 
 async function index(req, res) {
