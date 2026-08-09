@@ -31,8 +31,8 @@ async function register(req, res, next) {
     let result = null;
     try {
         result = await prisma.user.create({
-            data: { name, email, hashed_password : hashedPassword},
-            select: { name: true, email: true, id: true} //specify the column values to return
+            data: { name, email, hashed_password : hashedPassword },
+            select: { name: true, email: true, id: true } //specify the column values to return
         });
         return res.status(201).json(result);
     } catch (e) {
