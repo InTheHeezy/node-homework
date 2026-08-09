@@ -1,5 +1,6 @@
 const { taskSchema, patchTaskSchema } = require("../validation/taskSchema");
 const pool = require("../db/pg-pool");
+const prisma = require("../db/prisma");
 
 async function create(req, res) {
   if (!req.body) req.body = {};
@@ -26,20 +27,24 @@ async function index(req, res) {
   
   const activeUserId = global.user_id;
 
-  const tasks = await pool.query(
-    `SELECT id, title, is_completed 
-    FROM tasks 
-    WHERE user_id = $1`,
-    [activeUserId]
-  )
-
-  const savedTask = tasks.rows;
-
-  if (savedTask.length === 0) {
-    return res.status(404).json({ error: "Not Found" });
+  const tasks = await prisma.task.findMany({
+  where: {
+    user_id: global.user_id, // only the tasks for this user!
+  },
+  select: { 
+    title: true, 
+    is_completed: true, 
+    id: true 
   }
+});
 
-  return res.status(200).json(savedTask);
+  //const savedTask = tasks.rows;
+
+  // if (tasks.length === 0) {
+  //   return res.status(404).json({ error: "Not Found" });
+  // }
+
+  return res.status(200).json(tasks);
 }
 
 async function show(req, res) {
