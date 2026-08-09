@@ -37,9 +37,9 @@ async function register(req, res, next) {
                 hashed_password : hashedPassword 
             },
             select: { 
+                id: true,
                 name: true,
-                email: true, 
-                id: true 
+                email: true 
             } //specify the column values to return
         });
         return res.status(201).json(result);
