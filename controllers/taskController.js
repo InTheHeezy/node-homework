@@ -2,7 +2,7 @@ const { taskSchema, patchTaskSchema } = require("../validation/taskSchema");
 const prisma = require("../db/prisma");
 
 async function create(req, res) {
-  //if (!req.body) req.body = {};
+
   const { error, value } = taskSchema.validate(req.body, { abortEarly: false });
   if (error) return res.status(400).json({ message: error.message });
 
