@@ -59,7 +59,7 @@ async function show(req, res, next) {
   const activeUserId = global.user_id;
 
   try {
-    const task = prisma.task.findUnique({
+    const task = await prisma.task.findUnique({
       where: {
         id_user_id: {
           id: taskId,
@@ -80,7 +80,6 @@ async function show(req, res, next) {
       return next(err); // pass other errors to the global error handler
     }
   }
-  return res.status(200).json(showTask);
 }
 
 async function update(req, res, next) {
