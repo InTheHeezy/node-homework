@@ -61,7 +61,7 @@ async function show(req, res, next) {
   try {
     const task = await prisma.task.findUnique({
       where: {
-        id_user_id: {
+        userTask: {
           id: taskId,
           user_id: activeUserId
         }
@@ -102,7 +102,7 @@ async function update(req, res, next) {
       data: updateData,
       where: {
         id: taskId,
-        user_id: global.user_id,
+        user_id: activeUserId,
       },
       select: { 
         id: true, 
@@ -130,7 +130,7 @@ async function deleteTask(req, res, next) {
   try {
     const deletedTask = await prisma.task.delete({
       where: {
-        id_user_id: {
+        userTask: {
           id: taskId,
           user_id: activeUserId
         }
