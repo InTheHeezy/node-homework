@@ -101,8 +101,10 @@ async function update(req, res, next) {
     const updatedTask = await prisma.task.update({
       data: updateData,
       where: {
-        id: taskId,
-        user_id: activeUserId,
+          userTask: {
+            id: taskId,
+            user_id: activeUserId
+        }
       },
       select: { 
         id: true, 
