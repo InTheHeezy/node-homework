@@ -2,6 +2,7 @@ const { userSchema } = require("../validation/userSchema");
 const crypto = require("crypto");
 const util = require("util");
 const scrypt = util.promisify(crypto.scrypt);
+const pool = require("../db/pg-pool");
 
 async function hashPassword(password) {
   const salt = crypto.randomBytes(16).toString("hex");
@@ -16,7 +17,7 @@ async function comparePassword(inputPassword, storedHash) {
   return crypto.timingSafeEqual(keyBuffer, derivedKey);
 }
 
-async function register(req, res) {
+async function register(req, res, next) {
 
     if (!req.body) req.body = {};
     const { error, value } = userSchema.validate(req.body, { abortEarly: false });
@@ -24,18 +25,24 @@ async function register(req, res) {
 
     const { name, email, password } = value;
 
-    const id = Date.now().toString();
     const hashedPassword = await hashPassword(password);
 
-    const newUser = {
-        id,
-        name,
-        email,
-        hashedPassword
-    };
+    let result = null;
+    try {
+        result = await pool.query(
+            `INSERT INTO users (email, name, hashed_password) 
+            VALUES ($1, $2, $3)
+            RETURNING id, email, name`,
+            [email, name, hashedPassword]
+        );
+    } catch (e) {
+        if (e.code === "23505") return res.status(400).json({ message: "An account with this email address already exists." });
+        return next(e);
+    }
 
-    global.users.push(newUser);
-    global.user_id = newUser;
+    const newUser = result.rows[0];
+
+    global.user_id = Number(newUser.id);
 
     return res.status(201).json({
         name: newUser.name, 
@@ -46,7 +53,9 @@ async function register(req, res) {
 async function logon(req, res) {
     const { email, password } = req.body;
 
-    const user = global.users.find(user => user.email === email);
+    const result = await pool.query("SELECT * FROM users WHERE email = $1", [email]);
+
+    const user = result.rows[0];
 
     if(!user) {
         return res.status(401).json({ message: "Invalid email or password" });
@@ -54,14 +63,14 @@ async function logon(req, res) {
 
     const goodCredentials = await comparePassword(
         password,
-        user.hashedPassword,
+        user.hashed_password,
     );
 
     if(!goodCredentials) {
         return res.status(401).json({ message: "Invalid email or password" });
     }
 
-    global.user_id = user;
+    global.user_id = Number(user.id);
     
     return res.status(200).json({
         name: user.name, 
