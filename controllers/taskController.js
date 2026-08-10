@@ -43,6 +43,11 @@ async function index(req, res) {
     is_completed: true
   }
   });
+
+  if (tasks.length === 0) {
+    return res.status(404).json({ error: "Not Found" });
+  }
+
   return res.status(200).json(tasks);
 }
 
