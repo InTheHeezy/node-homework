@@ -14,12 +14,14 @@ async function create(req, res) {
     data: { 
       title : value.title, 
       is_completed : isCompletedValue, 
-      user_id : activeUserId 
+      user_id : activeUserId, 
+      priority : value.priority
     },
     select: {
       id: true,  
       title: true, 
-      is_completed: true 
+      is_completed: true, 
+      priority: true
     }
   });
   return res.status(201).json({
