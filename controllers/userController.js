@@ -27,21 +27,54 @@ async function register(req, res, next) {
     const hashedPassword = await hashPassword(password);
 
     try {
-        const user = await prisma.user.create({
-            data: { 
-                name, 
-                email, 
-                hashed_password : hashedPassword 
-            },
-            select: { 
-                id: true,
-                name: true,
-                email: true 
-            } //specify the column values to return
+        const result = await prisma.$transaction(async (tx) => {
+
+            const newUser = await tx.user.create({
+                data: { 
+                    name, 
+                    email, 
+                    hashed_password : hashedPassword 
+                },
+                select: { 
+                    id: true,
+                    name: true,
+                    email: true 
+                } 
+            });
+
+            const welcomeTaskData = [
+                { title: "Complete your profile", user_id: newUser.id, priority: "medium" },
+                { title: "Add your first task", user_id: newUser.id, priority: "high" },
+                { title: "Explore the app", user_id: newUser.id, priority: "low" }
+            ];
+
+            await tx.task.createMany({ data: welcomeTaskData });
+
+            const welcomeTasks = await tx.task.findMany({
+                where: {
+                    user_id: newUser.id,
+                    title: { in: welcomeTaskData.map(t => t.title)}
+                },
+                select: {
+                    id: true,
+                    title: true,
+                    is_completed: true,
+                    user_id: true,
+                    priority: true
+                }
+            });
+            return { user: newUser, welcomeTasks };
         });
-        return res.status(201).json(user);
+
+        res.status(201);
+        res.json({
+            user: result.user,
+            welcomeTasks: result.welcomeTasks,
+            transactionStatus: "success"
+        });
+        return;
     } catch (e) {
-        if (e.name === "PrismaClientKnownRequestError" && e.code === "P2002"){
+        if (e.code === "P2002"){
            return res.status(400).json({ message: "An account with this email address already exists." }); 
         } else {
            return next(e); 
