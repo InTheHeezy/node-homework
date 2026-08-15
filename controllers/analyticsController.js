@@ -46,6 +46,25 @@ async function getStats(req, res) {
         _count: { id: true }
     });
 
+    // Using raw SQL to safely truncate the timestamp to a clean date string
+    // Note: Use TO_CHAR(created_at, 'YYYY-MM-DD') if you are using PostgreSQL
+    // Note: Use DATE_FORMAT(created_at, '%Y-%m-%d') if you are using MySQL
+    // const dbWeeklyProgress = await prisma.$queryRaw`
+    //     SELECT 
+    //         TO_CHAR(created_at, 'YYYY-MM-DD') AS formatted_date, 
+    //         COUNT(id)::int AS task_count
+    //     FROM "Task"
+    //     WHERE "userId" = ${userId} AND created_at >= ${oneWeekAgo}
+    //     GROUP BY formatted_date
+    //     ORDER BY formatted_date ASC;
+    // `;
+
+    // Map the raw query results to your exact expected schema format
+    // const weeklyProgress = dbWeeklyProgress.map(progress => ({
+    //     createdAt: progress.formatted_date,
+    //     _count: { id: progress.task_count }
+    // }));
+
     // Return response with taskStats, recentTasks, and weeklyProgress
     res.status(200).json({
         taskStats,
