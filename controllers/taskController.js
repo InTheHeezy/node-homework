@@ -40,7 +40,7 @@ async function index(req, res) {
 
   const tasks = await prisma.task.findMany({
     where: {
-      user_id: global.user_id, 
+      user_id: activeUserId, 
     },
     select: { 
       id: true, 
@@ -64,17 +64,23 @@ async function index(req, res) {
 
   const totalTasks = await prisma.task.count({
     where: {
-      userId: global.user_id
+      user_id: activeUserId
     }
   });
 
-  
+  const pagination = {
+    page, 
+    limit,
+    total: totalTasks,
+    pages: Math.ceil(totalTasks / limit),
+    hasNext: page * limit < totalTasks,
+    hasPrev: page > 1
+  };
 
-  if (tasks.length === 0) {
-    return res.status(404).json({ error: "Not Found" });
-  }
-
-  return res.status(200).json(tasks);
+  return res.status(200).json({
+    tasks,
+    pagination
+  });
 }
 
 async function show(req, res, next) {
