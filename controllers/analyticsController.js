@@ -1,6 +1,6 @@
 const prisma = require("../db/prisma");
 
-async function getStats(req, res) {
+async function taskStats(req, res) {
 
     const userId = parseInt(req.params.id);
     if(isNaN(userId)) return res.status(400).json({ message: "Invalid user ID format" });
@@ -74,6 +74,59 @@ async function getStats(req, res) {
 
 }
 
+async function userStats(req, res) {
+
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
+    const skip = (page - 1) * limit;
+
+    const usersRaw = await prisma.user.findMany({
+    include: {
+        Task: {
+            where: { is_completed: false },
+            select: { id: true },
+            take: 5
+        },
+        _count: {
+            select: {
+                Task: true
+            }
+        }
+    },
+    skip: skip,
+    take: limit,
+    orderBy: { created_at: 'desc' }
+    });
+
+    // Transform to only include the fields we want
+    const users = usersRaw.map(user => ({
+        id: user.id,
+        name: user.name,
+        email: user.email,
+        created_at: user.created_at,
+        _count: user._count,
+        Task: user.Task
+    }));
+
+    const totalUsers = await prisma.user.count();
+
+    const pagination = {
+        page, 
+        limit,
+        total: totalUsers,
+        pages: Math.ceil(totalUsers / limit),
+        hasNext: page * limit < totalUsers,
+        hasPrev: page > 1
+    }
+
+    res.status(200).json({
+        users,
+        pagination
+    });
+
+}
+
 module.exports = {
-    getStats
+    taskStats,
+    userStats
 }
