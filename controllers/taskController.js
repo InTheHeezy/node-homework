@@ -40,7 +40,18 @@ async function index(req, res) {
   const skip = (page - 1) * limit;
 
   // Build where clause with optional search filter
-  const whereClause = { userId: global.user_id };
+  const whereClause = { user_id: global.user_id };
+
+  const getOrderBy = (query) => {
+  const validSortFields = ["title", "priority", "created_at", "id", "is_completed"];
+  const sortBy = query.sortBy || "created_at";
+  const sortDirection = query.sortDirection === "asc" ? "asc" : "desc";
+  
+  if (validSortFields.includes(sortBy)) {
+    return { [sortBy]: sortDirection };
+  }
+  return { created_at: "desc" }; // default fallback
+};
 
   if (req.query.find) {
     whereClause.title = {
@@ -66,9 +77,7 @@ async function index(req, res) {
     },
     skip : skip,
     take: limit, 
-    orderBy: {
-      created_at: 'desc'
-    }
+    orderBy: getOrderBy(req.query)
   });
 
   const totalTasks = await prisma.task.count({
