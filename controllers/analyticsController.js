@@ -1,6 +1,6 @@
 const prisma = require("../db/prisma");
 
-async function getStats(req, body) {
+async function getStats(req, res) {
 
     const userId = parseInt(req.params.id);
     if(isNaN(userId)) return res.status(400).json({ message: "Invalid user ID format" });
@@ -33,9 +33,8 @@ async function getStats(req, body) {
     // Calculate weekly progress using groupBy
     // First, calculate the date from one week ago
     // Hint: Use new Date() and setDate() to subtract 7 days
-    const oneWeekAgo = await prisma.task.groupBy({
-        
-    })
+    const oneWeekAgo = new Date();
+    oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
 
     // Then use groupBy with a where clause filtering by createdAt >= oneWeekAgo
     const weeklyProgress = await prisma.task.groupBy({
