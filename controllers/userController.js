@@ -90,8 +90,50 @@ function logoff(req, res) {
     return res.sendStatus(200);
 }
 
+async function show(req, res) {
+    const userId = parseInt(req.params.id);
+  
+    if (isNaN(userId)) {
+        return res.status(400).json({ error: "Invalid user ID" });
+    }
+
+    const user = await prisma.user.findUnique({
+        where: { 
+            id: userId 
+        },
+        select: {
+            id: true,
+            name: true,
+            email: true,
+            created_at: true,
+            Task: {
+                where: { 
+                    isCompleted: false 
+                },
+                select: { 
+                    id: true, 
+                    title: true, 
+                    priority: true,
+                    created_at: true 
+                },
+                orderBy: { 
+                    created_at: 'desc' 
+                },
+                take: 5
+            }
+        }
+  });
+
+  if (!user) {
+    return res.status(404).json({ message: "User not found" });
+  }
+
+  res.status(200).json(user);
+}
+
 module.exports = {
   register, 
   logon,
-  logoff
+  logoff,
+  show
 };
