@@ -36,14 +36,22 @@ async function index(req, res) {
   const activeUserId = global.user_id;
 
   const tasks = await prisma.task.findMany({
-  where: {
-    user_id: global.user_id, // only the tasks for this user!
-  },
-  select: { 
-    id: true, 
-    title: true, 
-    is_completed: true
-  }
+    where: {
+      user_id: global.user_id, // only the tasks for this user!
+    },
+    select: { 
+      id: true, 
+      title: true, 
+      is_completed: true,
+      priority: true,
+      created_at: true,
+      User: {
+        select: {
+          name: true,
+          email: true
+        }
+      }
+    }
   });
 
   if (tasks.length === 0) {
