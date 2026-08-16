@@ -82,7 +82,7 @@ async function getUserAnalytics(req, res) {
 
 }
 
-async function getUserWithStats(req, res) {
+async function getUsersWithStats(req, res) {
 
     const page = parseInt(req.query.page) || 1;
     const limit = parseInt(req.query.limit) || 10;
@@ -191,6 +191,6 @@ async function searchTasks(req, res) {
 
 module.exports = {
     getUserAnalytics,
-    getUserWithStats,
+    getUsersWithStats,
     searchTasks
 }
