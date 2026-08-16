@@ -81,6 +81,15 @@ async function index(req, res) {
   
   const page = parseInt(req.query.page) || 1;
   const limit = parseInt(req.query.limit) || 10;
+  
+  if (page < 1) {
+    return res.status(400).json({ error: "Page number must be atleast 1 " });
+  }
+  
+  if (limit < 1) {
+    return res.status(400).json({ error: "Limit must be between 1 and 100" });
+  }
+
   const skip = (page - 1) * limit;
 
   // Build where clause with optional search filter
