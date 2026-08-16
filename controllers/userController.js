@@ -66,13 +66,11 @@ async function register(req, res, next) {
             return { user: newUser, welcomeTasks };
         });
 
-        res.status(201);
-        res.json({
+        return res.status(201).json({
             user: result.user,
             welcomeTasks: result.welcomeTasks,
             transactionStatus: "success"
         });
-        return;
     } catch (e) {
         if (e.code === "P2002"){
            return res.status(400).json({ message: "An account with this email address already exists." }); 
