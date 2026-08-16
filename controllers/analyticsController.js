@@ -5,6 +5,14 @@ async function taskStats(req, res) {
     const userId = parseInt(req.params.id);
     if(isNaN(userId)) return res.status(400).json({ message: "Invalid user ID format" });
 
+    const userExists = await prisma.user.findUnique({
+        where: { id: userId}
+    });
+
+    if(!userExists) { 
+        return res.status(404).json({ message: "User not found" });
+    }
+
     // Use groupBy to count tasks by completion status
     const taskStats = await prisma.task.groupBy({
         by: ['is_completed'],
