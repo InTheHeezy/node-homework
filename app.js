@@ -1,9 +1,10 @@
 const express = require("express");
-const userRouter = require("./routes/userRoutes");
 const notFound = require("./middleware/not-found");
 const errorHandler = require("./middleware/error-handler");
 const authMiddleware = require("./middleware/auth");
+const userRouter = require("./routes/userRoutes");
 const taskRouter = require("./routes/taskRoutes");
+const analyticsRouter = require("./routes/analyticsRoutes");
 const prisma = require("./db/prisma");
 
 const app = express();
@@ -23,6 +24,7 @@ app.get("/health", async (req, res) => {
 
 app.use("/api/users", userRouter);
 app.use("/api/tasks", authMiddleware, taskRouter);
+app.use("/api/analytics", authMiddleware, analyticsRouter);
 
 app.use(notFound);
 app.use(errorHandler);
