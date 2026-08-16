@@ -1,6 +1,6 @@
 const prisma = require("../db/prisma");
 
-async function taskStats(req, res) {
+async function userAnalytics(req, res) {
 
     const userId = parseInt(req.params.id);
     if(isNaN(userId)) return res.status(400).json({ message: "Invalid user ID format" });
@@ -82,7 +82,7 @@ async function taskStats(req, res) {
 
 }
 
-async function userStats(req, res) {
+async function userWithStats(req, res) {
 
     const page = parseInt(req.query.page) || 1;
     const limit = parseInt(req.query.limit) || 10;
@@ -190,7 +190,7 @@ async function taskSearch(req, res) {
 }
 
 module.exports = {
-    taskStats,
-    userStats,
+    userAnalytics,
+    userWithStats,
     taskSearch
 }
