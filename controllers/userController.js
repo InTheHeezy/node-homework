@@ -95,6 +95,12 @@ async function logon(req, res) {
     const user = await prisma.user.findUnique({ 
         where: { 
             email : cleanEmail 
+        }, 
+        select: {
+            id: true,
+            name: true,
+            email: true,
+            hashed_password: true
         }
     });
 
@@ -110,6 +116,8 @@ async function logon(req, res) {
     if(!goodCredentials) {
         return res.status(401).json({ message: "Invalid email or password" });
     }
+
+    delete user.hashed_password;
 
     global.user_id = Number(user.id);
     
