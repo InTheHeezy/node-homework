@@ -168,7 +168,12 @@ async function show(req, res, next) {
       select: {
         id: true,
         title: true,
-        isCompleted: true
+        isCompleted: true,
+        User: {
+          select: {
+            name: true
+          }
+        }
       }
     });
     return res.status(200).json(task);
