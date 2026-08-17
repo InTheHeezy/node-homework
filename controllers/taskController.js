@@ -52,7 +52,7 @@ async function bulkCreate(req, res, next) {
     }
     validTasks.push({
       title: value.title,
-      is_completed: value.isCompleted || false,
+      isCompleted: value.isCompleted || false,
       priority: value.priority || 'medium',
       userId: global.user_id
     });
