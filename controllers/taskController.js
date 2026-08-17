@@ -27,7 +27,8 @@ async function create(req, res) {
   return res.status(201).json({
     id: newTask.id,
     title: newTask.title,
-    isCompleted: newTask.isCompleted
+    isCompleted: newTask.isCompleted,
+    priority: newTask.priority
   });
 }
 
