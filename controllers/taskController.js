@@ -13,35 +13,33 @@ async function create(req, res) {
   const newTask = await prisma.task.create({
     data: { 
       title : value.title, 
-      is_completed : isCompletedValue, 
-      user_id : activeUserId, 
+      isCompleted : isCompletedValue, 
+      userId : activeUserId, 
       priority : value.priority
     },
     select: {
       id: true,  
       title: true, 
-      is_completed: true, 
+      isCompleted: true, 
       priority: true
     }
   });
   return res.status(201).json({
     id: newTask.id,
     title: newTask.title,
-    isCompleted: newTask.is_completed
+    isCompleted: newTask.isCompleted
   });
 }
 
 async function bulkCreate(req, res, next) {
   const { tasks } = req.body;
 
-  // Validate the tasks array
   if (!tasks || !Array.isArray(tasks) || tasks.length === 0) {
     return res.status(400).json({ 
       error: "Invalid request data. Expected an array of tasks." 
     });
   }
 
-  // Validate all tasks before insertion
   const validTasks = [];
   for (const task of tasks) {
     const { error, value } = taskSchema.validate(task);
@@ -53,12 +51,12 @@ async function bulkCreate(req, res, next) {
     }
     validTasks.push({
       title: value.title,
-      is_completed: value.is_completed || false,
+      is_completed: value.isCompleted || false,
       priority: value.priority || 'medium',
-      user_id: global.user_id
+      userId: global.user_id
     });
   }
-    // Use createMany for batch insertion
+
   try {
     const result = await prisma.task.createMany({
       data: validTasks,
@@ -86,30 +84,29 @@ async function index(req, res) {
     return res.status(400).json({ error: "Page number must be atleast 1 " });
   }
   
-  if (limit < 1) {
+  if (limit < 1 || limit > 100) {
     return res.status(400).json({ error: "Limit must be between 1 and 100" });
   }
 
   const skip = (page - 1) * limit;
 
-  // Build where clause with optional search filter
-  const whereClause = { user_id: global.user_id };
+  const whereClause = { userId: global.user_id };
 
   const getOrderBy = (query) => {
-  const validSortFields = ["title", "priority", "created_at", "id", "is_completed"];
-  const sortBy = query.sortBy || "created_at";
-  const sortDirection = query.sortDirection === "asc" ? "asc" : "desc";
-  
-  if (validSortFields.includes(sortBy)) {
-    return { [sortBy]: sortDirection };
-  }
-  return { created_at: "desc" }; // default fallback
+    const validSortFields = ["title", "priority", "createdAt", "id", "isCompleted"];
+    const sortBy = query.sortBy || "createdAt";
+    const sortDirection = query.sortDirection === "asc" ? "asc" : "desc";
+    
+    if (validSortFields.includes(sortBy)) {
+      return { [sortBy]: sortDirection };
+    }
+    return { createdAt: "desc" }; 
 };
 
   if (req.query.find) {
     whereClause.title = {
-      contains: req.query.find,        // Matches %find% pattern
-      mode: 'insensitive'              // Case-insensitive search (ILIKE in PostgreSQL)
+      contains: req.query.find,        
+      mode: 'insensitive'              
     };
   }
 
@@ -118,9 +115,9 @@ async function index(req, res) {
     select: { 
       id: true, 
       title: true, 
-      is_completed: true,
+      isCompleted: true,
       priority: true,
-      created_at: true,
+      createdAt: true,
       User: {
         select: {
           name: true,
@@ -164,13 +161,13 @@ async function show(req, res, next) {
       where: {
         userTask: {
           id: taskId,
-          user_id: activeUserId
+          userId: activeUserId
         }
       },
       select: {
         id: true,
         title: true,
-        is_completed: true
+        isCompleted: true
       }
     });
     return res.status(200).json(task);
@@ -178,7 +175,7 @@ async function show(req, res, next) {
     if (err.code === "P2025" ) {
       return res.status(404).json({ message: "The task was not found."})
     } else {
-      return next(err); // pass other errors to the global error handler
+      return next(err); 
     }
   }
 }
@@ -204,13 +201,13 @@ async function update(req, res, next) {
       where: {
           userTask: {
             id: taskId,
-            user_id: activeUserId
+            userId: activeUserId
         }
       },
       select: { 
         id: true, 
         title: true, 
-        is_completed: true, 
+        isCompleted: true, 
       }
     });
     return res.status(200).json(updatedTask);
@@ -235,13 +232,13 @@ async function deleteTask(req, res, next) {
       where: {
         userTask: {
           id: taskId,
-          user_id: activeUserId
+          userId: activeUserId
         }
       },
       select: { 
         id: true, 
         title: true, 
-        is_completed: true, 
+        isCompleted: true, 
       }
     });
     return res.status(200).json(deletedTask);
