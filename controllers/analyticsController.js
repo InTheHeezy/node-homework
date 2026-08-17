@@ -15,26 +15,26 @@ async function getUserAnalytics(req, res) {
 
     // Use groupBy to count tasks by completion status
     const taskStats = await prisma.task.groupBy({
-        by: ['is_completed'],
-        where: { user_id: userId },
+        by: ['isCompleted'],
+        where: { userId: userId },
         _count: { id: true }
     });
 
     // Include recent task activity with eager loading
     const recentTasks = await prisma.task.findMany({
-        where: { user_id: userId },
+        where: { userId: userId },
         select: {
             id: true,
             title: true,
-            is_completed: true,
+            isCompleted: true,
             priority: true,
-            created_at: true,
-            user_id: true,
+            createdAt: true,
+            userId: true,
             User: {
                 select: { name: true }
             }
         },
-        orderBy: { created_at: 'desc' },
+        orderBy: { createdAt: 'desc' },
         take: 10
     });
 
@@ -46,10 +46,10 @@ async function getUserAnalytics(req, res) {
 
     // Then use groupBy with a where clause filtering by createdAt >= oneWeekAgo
     const weeklyProgress = await prisma.task.groupBy({
-        by: ['created_at'],
+        by: ['createdAt'],
         where: {
-            user_id: userId,
-            created_at: { gte: oneWeekAgo }
+            userId: userId,
+            createdAt: { gte: oneWeekAgo }
         },
         _count: { id: true }
     });
@@ -91,7 +91,7 @@ async function getUsersWithStats(req, res) {
         return res.status(400).json({ error: "Page number must be atleast 1 " });
     }
   
-    if (limit < 1) {
+    if (limit < 1 || limit > 100) {
         return res.status(400).json({ error: "Limit must be between 1 and 100" });
     }
 
@@ -100,7 +100,7 @@ async function getUsersWithStats(req, res) {
     const usersRaw = await prisma.user.findMany({
     include: {
         Task: {
-            where: { is_completed: false },
+            where: { isCompleted: false },
             select: { id: true },
             take: 5
         },
@@ -112,7 +112,7 @@ async function getUsersWithStats(req, res) {
     },
     skip: skip,
     take: limit,
-    orderBy: { created_at: 'desc' }
+    orderBy: { createdAt: 'desc' }
     });
 
     // Transform to only include the fields we want
@@ -120,7 +120,7 @@ async function getUsersWithStats(req, res) {
         id: user.id,
         name: user.name,
         email: user.email,
-        created_at: user.created_at,
+        createdAt: user.created_at,
         _count: user._count,
         Task: user.Task
     }));
