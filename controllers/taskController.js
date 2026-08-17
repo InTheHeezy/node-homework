@@ -169,9 +169,11 @@ async function show(req, res, next) {
         id: true,
         title: true,
         isCompleted: true,
+        priority: true,
         User: {
           select: {
-            name: true
+            name: true,
+            email: true
           }
         }
       }
