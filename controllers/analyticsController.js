@@ -120,7 +120,7 @@ async function getUsersWithStats(req, res) {
         id: user.id,
         name: user.name,
         email: user.email,
-        createdAt: user.created_at,
+        createdAt: user.createdAt,
         _count: user._count,
         Task: user.Task
     }));
