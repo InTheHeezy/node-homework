@@ -33,7 +33,7 @@ async function register(req, res, next) {
                 data: { 
                     name, 
                     email, 
-                    hashed_password : hashedPassword 
+                    hashedPassword : hashedPassword 
                 },
                 select: { 
                     id: true,
@@ -43,23 +43,23 @@ async function register(req, res, next) {
             });
 
             const welcomeTaskData = [
-                { title: "Complete your profile", user_id: newUser.id, priority: "medium" },
-                { title: "Add your first task", user_id: newUser.id, priority: "high" },
-                { title: "Explore the app", user_id: newUser.id, priority: "low" }
+                { title: "Complete your profile", userId: newUser.id, priority: "medium" },
+                { title: "Add your first task", userId: newUser.id, priority: "high" },
+                { title: "Explore the app", userId: newUser.id, priority: "low" }
             ];
 
             await tx.task.createMany({ data: welcomeTaskData });
 
             const welcomeTasks = await tx.task.findMany({
                 where: {
-                    user_id: newUser.id,
+                    userId: newUser.id,
                     title: { in: welcomeTaskData.map(t => t.title)}
                 },
                 select: {
                     id: true,
                     title: true,
-                    is_completed: true,
-                    user_id: true,
+                    isCompleted: true,
+                    userId: true,
                     priority: true
                 }
             });
@@ -98,7 +98,7 @@ async function logon(req, res) {
             id: true,
             name: true,
             email: true,
-            hashed_password: true
+            hashedPassword: true
         }
     });
 
@@ -108,14 +108,14 @@ async function logon(req, res) {
 
     const goodCredentials = await comparePassword(
         password,
-        user.hashed_password,
+        user.hashedPassword,
     );
 
     if(!goodCredentials) {
         return res.status(401).json({ message: "Invalid email or password" });
     }
 
-    delete user.hashed_password;
+    delete user.hashedPassword;
 
     global.user_id = Number(user.id);
     
@@ -145,7 +145,7 @@ async function show(req, res) {
             id: true,
             name: true,
             email: true,
-            created_at: true,
+            createdAt: true,
             Task: {
                 where: { 
                     isCompleted: false 
@@ -154,10 +154,10 @@ async function show(req, res) {
                     id: true, 
                     title: true, 
                     priority: true,
-                    created_at: true 
+                    createdAt: true 
                 },
                 orderBy: { 
-                    created_at: 'desc' 
+                    createdAt: 'desc' 
                 },
                 take: 5
             }
