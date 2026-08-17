@@ -196,10 +196,11 @@ async function update(req, res, next) {
 
   const activeUserId = global.user_id;
 
-  //lets the user update 0,1,or both parts of data (title, is_completed)
+  //lets the user update 0,1,2 or all 3 parts of data (title, is_completed, priority)
   const updateData = {};
   if (value.title !== undefined) updateData.title = value.title;
-  if (value.isCompleted !== undefined) updateData.is_completed = value.isCompleted;
+  if (value.isCompleted !== undefined) updateData.isCompleted = value.isCompleted;
+  if (value.priority !== undefined) updateData.priority = value.priority;
 
   try {
     const updatedTask = await prisma.task.update({
@@ -214,6 +215,7 @@ async function update(req, res, next) {
         id: true, 
         title: true, 
         isCompleted: true, 
+        priority: true
       }
     });
     return res.status(200).json(updatedTask);
