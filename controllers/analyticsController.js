@@ -170,10 +170,12 @@ async function searchTasks(req, res) {
             OR u.name ILIKE ${searchPattern}
         `;
 
+    const totalMatches = (totalCountResult && totalCountResult[0]) ? totalCountResult[0].total : 0;
+
     res.status(200).json({
         results: searchResults,
         query: exactMatch,
-        count: totalCountResult,
+        count: Number(totalMatches),
         returnedCount: searchResults.length
     })
 }
