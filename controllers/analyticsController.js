@@ -162,10 +162,19 @@ async function searchTasks(req, res) {
     LIMIT ${parseInt(limit)}
     `;
 
+    const totalCountResult = await prisma.$queryRaw`
+        SELECT COUNT(t.id)::int as "total"
+        FROM tasks t
+        JOIN users u ON t.user_id = u.id
+        WHERE t.title ILIKE ${searchPattern} 
+            OR u.name ILIKE ${searchPattern}
+        `;
+
     res.status(200).json({
         results: searchResults,
         query: exactMatch,
-        count: searchResults.length
+        count: totalCountResult,
+        returnedCount: searchResults.length
     })
 }
 
