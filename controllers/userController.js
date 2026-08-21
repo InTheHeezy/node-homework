@@ -148,7 +148,7 @@ async function logon(req, res) {
 }
 
 function logoff(req, res) {
-    global.user_id = null;
+    res.clearCookie("jwt", cookieFlags(req));
     return res.sendStatus(200);
 }
 
