@@ -139,11 +139,14 @@ async function logon(req, res) {
 
     delete user.hashedPassword;
 
-    global.user_id = Number(user.id);
+    //global.user_id = Number(user.id);
+
+    const csrfToken = setJwtCookie(req, res, user)
     
     return res.status(200).json({
         name: user.name, 
-        email: user.email 
+        email: user.email,
+        csrfToken: csrfToken 
     });
 }
 
