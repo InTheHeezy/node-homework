@@ -7,11 +7,23 @@ const taskRouter = require("./routes/taskRoutes");
 const analyticsRouter = require("./routes/analyticsRoutes");
 const prisma = require("./db/prisma");
 const cookieParser = require("cookie-parser");
+const helmet = require("helmet");
+const { xss } = require("express-xss-sanitizer");
+const rateLimiter = require("express-rate-limit");
 
 const app = express();
 
+app.set("trust proxy", 1);
+app.use(helmet());
+app.use(
+  rateLimiter({
+    windowMs: 15 * 60 * 1000, // 15 minutes
+    max: 100, // limit each IP to 100 requests per windowMs
+  }),
+);
 app.use(express.json());
 app.use(cookieParser());
+app.use(xss());
 
 app.get("/health", async (req, res) => {
   try {
