@@ -139,8 +139,6 @@ async function logon(req, res) {
 
     delete user.hashedPassword;
 
-    //global.user_id = Number(user.id);
-
     const csrfToken = setJwtCookie(req, res, user)
     
     return res.status(200).json({
