@@ -6,12 +6,12 @@ const userRouter = require("./routes/userRoutes");
 const taskRouter = require("./routes/taskRoutes");
 const analyticsRouter = require("./routes/analyticsRoutes");
 const prisma = require("./db/prisma");
+const cookieParser = require("cookie-parser");
 
 const app = express();
 
-//global.user_id = null;
-
 app.use(express.json());
+app.use(cookieParser());
 
 app.get("/health", async (req, res) => {
   try {
@@ -50,6 +50,5 @@ const handleShutdown = async () => {
 };
 
 process.on("SIGINT", handleShutdown);
-//process.on("SIGTERM", handleShutdown); this is for cloud platforms
 
 module.exports = { app, server };
