@@ -6,7 +6,7 @@ async function create(req, res) {
   const { error, value } = taskSchema.validate(req.body, { abortEarly: false });
   if (error) return res.status(400).json({ message: error.message });
 
-  const activeUserId = global.user_id;
+  const activeUserId = req.user.id;
   
   const isCompletedValue = value.isCompleted ?? false;
 
@@ -54,7 +54,7 @@ async function bulkCreate(req, res, next) {
       title: value.title,
       isCompleted: value.isCompleted || false,
       priority: value.priority || 'medium',
-      userId: global.user_id
+      userId: req.user.id
     });
   }
 
@@ -76,7 +76,7 @@ async function bulkCreate(req, res, next) {
 
 async function index(req, res) {
   
-  const activeUserId = global.user_id;
+  const activeUserId = req.user.id;
   
   const page = parseInt(req.query.page) || 1;
   const limit = parseInt(req.query.limit) || 10;
@@ -91,7 +91,7 @@ async function index(req, res) {
 
   const skip = (page - 1) * limit;
 
-  const whereClause = { userId: global.user_id };
+  const whereClause = { userId: req.user.id };
 
   const getOrderBy = (query) => {
     const validSortFields = ["title", "priority", "createdAt", "id", "isCompleted"];
@@ -155,7 +155,7 @@ async function show(req, res, next) {
   const taskId = parseInt(req.params.id);
   if(isNaN(taskId)) return res.status(400).json({ message: "Invalid task ID format" });
 
-  const activeUserId = global.user_id;
+  const activeUserId = req.user.id;
 
   try {
     const task = await prisma.task.findUnique({
@@ -194,7 +194,7 @@ async function update(req, res, next) {
   const { error, value } = patchTaskSchema.validate(req.body, { abortEarly: false });
   if (error) return res.status(400).json({ message: error.message });
 
-  const activeUserId = global.user_id;
+  const activeUserId = req.user.id;
 
   //lets the user update 0,1,2 or all 3 parts of data (title, is_completed, priority)
   const updateData = {};
@@ -231,7 +231,7 @@ async function deleteTask(req, res, next) {
   const taskId = parseInt(req.params.id);
   if(isNaN(taskId)) return res.status(400).json({ message: "Invalid task ID format" });
 
-  const activeUserId = global.user_id;
+  const activeUserId = req.user.id;
 
   try {
     const deletedTask = await prisma.task.delete({
