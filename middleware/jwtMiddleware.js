@@ -8,6 +8,12 @@ const send401 = (res) => {
 };
 
 module.exports = async (req, res, next) => {
+  const publicPaths = ["/register", "/logon"];
+
+  if (publicPaths.includes(req.path)) {
+    return next();
+  }
+  
   const token = req?.cookies?.jwt;
   if (!token) {
     return send401(res);

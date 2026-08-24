@@ -34,7 +34,7 @@ app.get("/health", async (req, res) => {
   }
 });
 
-app.use("/api/users", userRouter);
+app.use("/api/users", jwtMiddleware, userRouter);
 app.use("/api/tasks", jwtMiddleware, taskRouter);
 app.use("/api/analytics", jwtMiddleware, analyticsRouter);
 
