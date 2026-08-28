@@ -78,3 +78,14 @@ describe("user object validation tests", () => {
     expect(error).toBeFalsy();
   });
 });
+
+describe("task object validation tests", () => {
+    it("8. The task schema requires a title", () => {
+        const { error } = taskSchema.validate(
+            { isCompleted: "false", priority: "medium" },
+            { abortEarly: false },
+        );
+        const titleError = error?.details?.find((detail) => detail.context.key === "title");
+        expect(titleError).toBeDefined();
+    });    
+});
