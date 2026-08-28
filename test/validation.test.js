@@ -8,7 +8,7 @@ describe("user object validation tests", () => {
         { abortEarly: false },
     );
     expect(
-      error.details.find((detail) => detail.context.key == "password"),
+        error.details.find((detail) => detail.context.key == "password"),
     ).toBeDefined();
   });
 
@@ -88,4 +88,14 @@ describe("task object validation tests", () => {
         const titleError = error?.details?.find((detail) => detail.context.key === "title");
         expect(titleError).toBeDefined();
     });    
+
+    it("9. If an isCompleted value is specified, it must be valid", () => {
+        const { error } = taskSchema.validate(
+            { title: "TaskOne", isCompleted: "NotValid", priority: "medium"},
+            { abortEarly: false },
+        );
+        expect(
+            error?.details?.find((detail) => detail.context.key == "isCompleted"),
+        ).toBeDefined();
+    });
 });
