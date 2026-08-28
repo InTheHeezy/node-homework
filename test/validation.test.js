@@ -126,4 +126,13 @@ describe("patch task validation tests", () => {
         );
         expect(error).toBeFalsy();
     });
+
+    it("13. If no value is provided for isCompleted this remains undefined in the returned value", () => {
+        const { error, value } = patchTaskSchema.validate(
+            { title: "Updated Task Title" },
+            { abortEarly: false },
+        );
+        expect(error).toBeFalsy();
+        expect(value.isCompleted).toBeUndefined();
+    });
 });
