@@ -4,8 +4,8 @@ const { taskSchema, patchTaskSchema } = require("../validation/taskSchema");
 describe("user object validation tests", () => {
   it("1. doesn't permit a trivial password", () => {
     const { error } = userSchema.validate(
-      { name: "Bob", email: "bob@sample.com", password: "password" },
-      { abortEarly: false },
+        { name: "Bob", email: "bob@sample.com", password: "password" },
+        { abortEarly: false },
     );
     expect(
       error.details.find((detail) => detail.context.key == "password"),
@@ -30,4 +30,13 @@ describe("user object validation tests", () => {
         error.details.find((detail) => detail.context.key == "email")
     ).toBeDefined();
   });
+
+  it("4. The user schema requires a password", () => {
+    const { error } = userSchema.validate(
+        { name: "Bob", email: "bob@sample.com"},
+        { abortEarly: false },
+    );
+    const passError = error?.details?.find((detail) => detail.context.key === "password");
+    expect(passError).toBeDefined();
+  })
 });
