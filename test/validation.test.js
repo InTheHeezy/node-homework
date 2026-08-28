@@ -38,5 +38,14 @@ describe("user object validation tests", () => {
     );
     const passError = error?.details?.find((detail) => detail.context.key === "password");
     expect(passError).toBeDefined();
-  })
+  });
+
+  it("5. The user schema requires name", () => {
+    const { error } = userSchema.validate(
+        {email: "bob@sample.com", password: "Password1" },
+        { abortEarly: false },
+    );
+    const nameError = error?.details?.find((detail) => detail.context.key === "name");
+    expect(nameError).toBeDefined();
+  });
 });
