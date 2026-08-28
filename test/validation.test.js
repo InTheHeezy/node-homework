@@ -11,4 +11,14 @@ describe("user object validation tests", () => {
       error.details.find((detail) => detail.context.key == "password"),
     ).toBeDefined();
   });
+
+  it("2. The user schema requires that an email be specified", () => {
+    const { error } = userSchema.validate(
+        { name: "Bob", password: "password" },
+        { abortEarly: false}, 
+    );
+    const emailError = error?.details?.find((detail) => detail.context.key === "email");
+    expect(emailError).toBeDefined();
+  });
+
 });
