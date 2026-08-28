@@ -48,4 +48,24 @@ describe("user object validation tests", () => {
     const nameError = error?.details?.find((detail) => detail.context.key === "name");
     expect(nameError).toBeDefined();
   });
+
+  it("6. The name must be valid (3 to 30 characters)", () => {
+    const short = userSchema.validate(
+        { name: "DZ", email: "bob@sample.com", password: "Password1" },
+        { abortEarly: false}, 
+    );
+    const shortError = short.error?.details?.find((detail) => detail.context.key === "name");
+    expect(shortError).toBeDefined();
+
+    const long = userSchema.validate(
+        {   
+            name: "ThisNameIsMoreThanThirtyCharactersLong", 
+            email: "bob@sample.com", 
+            password: "Password1" 
+        },
+        { abortEarly: false}, 
+    );
+    const longError = long.error?.details?.find((detail) => detail.context.key === "name");
+    expect(longError).toBeDefined();
+  });
 });
