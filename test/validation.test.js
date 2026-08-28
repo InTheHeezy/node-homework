@@ -98,4 +98,13 @@ describe("task object validation tests", () => {
             error?.details?.find((detail) => detail.context.key == "isCompleted"),
         ).toBeDefined();
     });
+
+    it("10. If an isCompleted value is not specified but the rest of the object is valid, a default of false is provided by validation", () => {
+        const { error, value } = taskSchema.validate(
+            { title: "TaskOne", priority: "medium"},
+            { abortEarly: false },
+        );
+        expect(error).toBeFalsy();
+        expect(value.isCompleted).toBe(false);
+    });
 });
