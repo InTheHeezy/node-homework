@@ -85,4 +85,9 @@ describe("testing task creation", () => {
     saveData = saveRes._getJSONData();
     expect(saveData.isCompleted).toBe(false);
   });
+
+  it("19. The object does not have any value for userId", async () => {
+    saveData = saveRes._getJSONData();
+    expect(saveData.userId).toBeUndefined();
+  });
 })
