@@ -12,6 +12,7 @@ const {
   update,
   deleteTask,
 } = require("../controllers/taskController");
+const { response } = require("express");
 
 // a few useful globals
 let user1 = null;
@@ -42,7 +43,7 @@ describe("testing task creation", () => {
     });
     saveRes = httpMocks.createResponse({eventEmitter: EventEmitter});
     try {
-      await waitForRouteHandlerCompletion(create,req, saveRes);
+      await waitForRouteHandlerCompletion(create, req, saveRes);
     } catch (e) {
         expect(e.name).toBe("TypeError");
     }
@@ -56,7 +57,7 @@ describe("testing task creation", () => {
     });
     saveRes = httpMocks.createResponse({eventEmitter: EventEmitter});
     try {
-      await waitForRouteHandlerCompletion(create,req, saveRes);
+      await waitForRouteHandlerCompletion(create, req, saveRes);
     } catch (e) {
         expect(e.name).toBe("PrismaClientKnownRequestError");
         expect(e.code).toBe("P2003");
@@ -71,7 +72,7 @@ describe("testing task creation", () => {
     });
     saveRes = httpMocks.createResponse({eventEmitter: EventEmitter});
 
-    await waitForRouteHandlerCompletion(create,req, saveRes);
+    await waitForRouteHandlerCompletion(create, req, saveRes);
 
     expect(saveRes.statusCode).toBe(201);
   });
@@ -112,7 +113,7 @@ describe("test getting created tasks", () => {
             method: "GET",
         });
         saveRes = httpMocks.createResponse({eventEmitter: EventEmitter});
-        await waitForRouteHandlerCompletion(index,req, saveRes);
+        await waitForRouteHandlerCompletion(index, req, saveRes);
         expect(saveRes.statusCode).toBe(200);
     });
 
@@ -138,7 +139,24 @@ describe("test getting created tasks", () => {
         });
 
         saveRes = httpMocks.createResponse({eventEmitter: EventEmitter});
-        await waitForRouteHandlerCompletion(index,req, saveRes);
+        await waitForRouteHandlerCompletion(index, req, saveRes);
         expect(saveRes.statusCode).toBe(404);
+    });
+
+    it("26. You can retrieve the created task using show()", async () => {
+      const req = httpMocks.createRequest({
+        user: { id: user1.id },
+        method: "GET",
+        params: { id: saveTaskId }
+      });
+
+      saveRes = httpMocks.createResponse({eventEmitter: EventEmitter});
+      await waitForRouteHandlerCompletion(show, req, saveRes);
+      
+      expect(saveRes.statusCode).toBe(200);
+      const responseData = saveRes._getJSONData();
+      expect(responseData).toBeDefined();
+      expect(responseData.id).toBe(saveTaskId);
+      expect(responseData.title).toBe("first task");
     });
 });
