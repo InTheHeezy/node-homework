@@ -76,17 +76,17 @@ describe("testing task creation", () => {
     expect(saveRes.statusCode).toBe(201);
   });
 
-  it("17. The object returned from the create() call has the expected title", async () => {
+  it("17. The object returned from the create() call has the expected title", () => {
     saveData = saveRes._getJSONData();
     expect(saveData.title).toBe("first task");
   });
 
-  it("18. The object has the right value for isCompleted", async () => {
+  it("18. The object has the right value for isCompleted", () => {
     saveData = saveRes._getJSONData();
     expect(saveData.isCompleted).toBe(false);
   });
 
-  it("19. The object does not have any value for userId", async () => {
+  it("19. The object does not have any value for userId", () => {
     saveData = saveRes._getJSONData();
     expect(saveData.userId).toBeUndefined();
     saveTaskId = saveData.id;
@@ -116,8 +116,13 @@ describe("test getting created tasks", () => {
         expect(saveRes.statusCode).toBe(200);
     });
 
-    it("22. The returned object has a tasks array of length 1.", async () => {
-        saveData = saveRes._getJSONData(); // reusing saveRes
+    it("22. The returned object has a tasks array of length 1.", () => {
+        saveData = saveRes._getJSONData();
         expect(saveData.tasks.length).toBe(1);
+    });
+
+    it("23. The title in the first array object is as expected", () => {
+        saveData = saveRes._getJSONData();
+        expect(saveData.tasks[0].title).toBe("first task");
     });
 });
