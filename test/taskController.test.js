@@ -172,7 +172,7 @@ describe("test update and delete of tasks", () => {
   it("28. User1 can set the task corresponding to saveTaskId to isCompleted: true", async () => {
     const req = httpMocks.createRequest({
       user: { id: user1.id },
-      method: "PATCH", // MAYBE PATCH
+      method: "PATCH",
       params: { id: saveTaskId.toString() },
       body: { isCompleted: true }
     });
@@ -181,5 +181,17 @@ describe("test update and delete of tasks", () => {
     expect(saveRes.statusCode).toBe(200);
     saveData = saveRes._getJSONData();
     expect(saveData.isCompleted).toBe(true);
+  });
+
+  it("29. User2 can't do this", async () => {
+      const req = httpMocks.createRequest({
+        user: { id: user2.id },
+        method: "PATCH",
+        params: { id: saveTaskId.toString() },
+        body: { isCompleted: true }
+    });
+    saveRes = httpMocks.createResponse({eventEmitter: EventEmitter});
+    await waitForRouteHandlerCompletion(update, req, saveRes);
+    expect(saveRes.statusCode).toBe(404);
   });
 });
