@@ -58,9 +58,22 @@ describe("testing task creation", () => {
     try {
       await waitForRouteHandlerCompletion(create,req, saveRes);
     } catch (e) {
-
         expect(e.name).toBe("PrismaClientKnownRequestError");
         expect(e.code).toBe("P2003");
     }
+  });
+
+  it("16. If you have a valid user id, create() succeeds", async () => {
+    const req = httpMocks.createRequest({
+        user: { id: user1.id },
+        method: "POST",
+        body: { title: "first task" },
+    });
+    saveRes = httpMocks.createResponse({eventEmitter: EventEmitter});
+
+    await waitForRouteHandlerCompletion(create,req, saveRes);
+
+    expect(saveRes.statusCode).toBe(201);
+
   });
 })
