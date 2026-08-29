@@ -217,8 +217,8 @@ async function update(req, res, next) {
     const updatedTask = await prisma.task.update({
       data: updateData,
       where: {
-            id: taskId,
-            userId: activeUserId
+        id: taskId,
+        userId: activeUserId
       },
       select: { 
         id: true, 
@@ -232,7 +232,7 @@ async function update(req, res, next) {
     if (err.code === "P2025" ) {
       return res.status(404).json({ message: "The task was not found."})
     } else {
-      return next(err); // pass other errors to the global error handler
+      return next(err); 
     }
   }
 }
@@ -261,7 +261,7 @@ async function deleteTask(req, res, next) {
     if (err.code === "P2025" ) {
       return res.status(404).json({ message: "The task was not found."})
     } else {
-      return next(err); // pass other errors to the global error handler
+      return next(err); 
     }
   }
 }
