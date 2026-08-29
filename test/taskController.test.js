@@ -78,7 +78,11 @@ describe("testing task creation", () => {
 
   it("17. The object returned from the create() call has the expected title", async () => {
     saveData = saveRes._getJSONData();
-
     expect(saveData.title).toBe("first task");
+  });
+
+  it("18. The object has the right value for isCompleted", async () => {
+    saveData = saveRes._getJSONData();
+    expect(saveData.isCompleted).toBe(false);
   });
 })
