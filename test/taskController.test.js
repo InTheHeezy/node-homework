@@ -111,7 +111,7 @@ describe("test getting created tasks", () => {
             user: { id: user1.id },
             method: "GET",
         });
-        saveRes = httpMocks.createResponse({eventEmitter: EventEmitter});;
+        saveRes = httpMocks.createResponse({eventEmitter: EventEmitter});
         await waitForRouteHandlerCompletion(index,req, saveRes);
         expect(saveRes.statusCode).toBe(200);
     });
@@ -124,5 +124,10 @@ describe("test getting created tasks", () => {
     it("23. The title in the first array object is as expected", () => {
         saveData = saveRes._getJSONData();
         expect(saveData.tasks[0].title).toBe("first task");
+    });
+
+    it("24. The first array object does not contain a userId", () => {
+        saveData = saveRes._getJSONData();
+        expect(saveData.tasks[0].userId).toBeUndefined();
     });
 });
