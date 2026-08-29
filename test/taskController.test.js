@@ -3,7 +3,7 @@ process.env.DATABASE_URL = process.env.TEST_DATABASE_URL; // point to the test d
 const prisma = require("../db/prisma");
 const httpMocks = require("node-mocks-http");
 const { EventEmitter } = require('events');
-const { waitForRouteHandlerCompletion } = require("./waitForRouteHandlerCompletion.js")
+const waitForRouteHandlerCompletion = require("./waitForRouteHandlerCompletion.js")
 
 const {
   index,
@@ -45,6 +45,22 @@ describe("testing task creation", () => {
       await waitForRouteHandlerCompletion(create,req, saveRes);
     } catch (e) {
         expect(e.name).toBe("TypeError");
+    }
+  });
+
+  it("15. You can't create a task with a bogus user id", async () => {
+    const req = httpMocks.createRequest({
+        user: { id: 999999999 },
+        method: "POST",
+        body: { title: "first task" },
+    });
+    saveRes = httpMocks.createResponse({eventEmitter: EventEmitter});
+    try {
+      await waitForRouteHandlerCompletion(create,req, saveRes);
+    } catch (e) {
+
+        expect(e.name).toBe("PrismaClientKnownRequestError");
+        expect(e.code).toBe("P2003");
     }
   });
 })
