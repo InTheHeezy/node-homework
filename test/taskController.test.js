@@ -154,4 +154,16 @@ describe("test getting created tasks", () => {
       await waitForRouteHandlerCompletion(show, req, saveRes);
       expect(saveRes.statusCode).toBe(200);
     });
+
+    it("27. User2 can't retrieve this task entry. You should get a 404", async () => {
+      const req = httpMocks.createRequest({
+        user: { id: user2.id },
+        method: "GET",
+        params: { id: saveTaskId.toString() }
+      });
+
+      saveRes = httpMocks.createResponse({eventEmitter: EventEmitter});
+      await waitForRouteHandlerCompletion(show, req, saveRes);
+      expect(saveRes.statusCode).toBe(404);
+    });
 });
