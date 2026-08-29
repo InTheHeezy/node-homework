@@ -130,4 +130,15 @@ describe("test getting created tasks", () => {
         saveData = saveRes._getJSONData();
         expect(saveData.tasks[0].userId).toBeUndefined();
     });
+
+    it("25. If you get the list of tasks using the userId from user2, you get a 404", async () => {
+        const req = httpMocks.createRequest({
+            user: { id: user2.id }, 
+            method: "GET",
+        });
+
+        saveRes = httpMocks.createResponse({eventEmitter: EventEmitter});
+        await waitForRouteHandlerCompletion(index,req, saveRes);
+        expect(saveRes.statusCode).toBe(404);
+    });
 });
