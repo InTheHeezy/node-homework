@@ -115,4 +115,9 @@ describe("test getting created tasks", () => {
         await waitForRouteHandlerCompletion(index,req, saveRes);
         expect(saveRes.statusCode).toBe(200);
     });
+
+    it("22. The returned object has a tasks array of length 1.", async () => {
+        saveData = saveRes._getJSONData(); // reusing saveRes
+        expect(saveData.tasks.length).toBe(1);
+    });
 });
