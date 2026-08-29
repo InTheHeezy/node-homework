@@ -89,5 +89,20 @@ describe("testing task creation", () => {
   it("19. The object does not have any value for userId", async () => {
     saveData = saveRes._getJSONData();
     expect(saveData.userId).toBeUndefined();
+    saveTaskId = saveData.id;
   });
 })
+
+describe("test getting created tasks", () => {
+    it("20. You can't get a list of tasks without a user id", async () => {
+        const req = httpMocks.createRequest({
+            method: "GET"
+        })
+        saveRes = httpMocks.createResponse({ eventEmitter: EventEmitter });
+        try {
+            await waitForRouteHandlerCompletion(index, req, saveRes);
+        } catch (e) {
+            expect(e.name).toBe("TypeError");
+        }
+    });
+});
