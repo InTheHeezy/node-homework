@@ -205,4 +205,15 @@ describe("test update and delete of tasks", () => {
     await waitForRouteHandlerCompletion(deleteTask, req, saveRes);
     expect(saveRes.statusCode).toBe(404);
   });
+
+  it("31. User1 can delete this task", async () => {
+    const req = httpMocks.createRequest({
+      user: { id: user1.id },
+      method: "DELETE",
+      params: { id: saveTaskId.toString() }
+    });
+    saveRes = httpMocks.createResponse({eventEmitter: EventEmitter});
+    await waitForRouteHandlerCompletion(deleteTask, req, saveRes);
+    expect(saveRes.statusCode).toBe(200);
+  });
 });
