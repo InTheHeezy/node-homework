@@ -194,4 +194,15 @@ describe("test update and delete of tasks", () => {
     await waitForRouteHandlerCompletion(update, req, saveRes);
     expect(saveRes.statusCode).toBe(404);
   });
+
+  it("30. User2 can't delete this task", async () => {
+    const req = httpMocks.createRequest({
+      user: { id: user2.id },
+      method: "DELETE",
+      params: { id: saveTaskId.toString() }
+    });
+    saveRes = httpMocks.createResponse({eventEmitter: EventEmitter});
+    await waitForRouteHandlerCompletion(deleteTask, req, saveRes);
+    expect(saveRes.statusCode).toBe(404);
+  });
 });
