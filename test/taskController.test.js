@@ -74,6 +74,11 @@ describe("testing task creation", () => {
     await waitForRouteHandlerCompletion(create,req, saveRes);
 
     expect(saveRes.statusCode).toBe(201);
+  });
 
+  it("17. The object returned from the create() call has the expected title", async () => {
+    saveData = saveRes._getJSONData();
+
+    expect(saveData.title).toBe("first task");
   });
 })
