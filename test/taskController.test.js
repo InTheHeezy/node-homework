@@ -105,4 +105,14 @@ describe("test getting created tasks", () => {
             expect(e.name).toBe("TypeError");
         }
     });
+
+    it("21. If you use user1's id on index() the call returns a 200 status.", async () => {
+        const req = httpMocks.createRequest({
+            user: { id: user1.id },
+            method: "GET",
+        });
+        saveRes = httpMocks.createResponse({eventEmitter: EventEmitter});;
+        await waitForRouteHandlerCompletion(index,req, saveRes);
+        expect(saveRes.statusCode).toBe(200);
+    });
 });
