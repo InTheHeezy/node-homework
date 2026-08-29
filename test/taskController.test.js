@@ -216,4 +216,16 @@ describe("test update and delete of tasks", () => {
     await waitForRouteHandlerCompletion(deleteTask, req, saveRes);
     expect(saveRes.statusCode).toBe(200);
   });
+
+  it("32. Retrieving user1's tasks now returns a 404", async () => {
+    const req = httpMocks.createRequest({
+      user: { id: user1.id },
+      method: "GET",
+      params: { id: saveTaskId.toString() }
+    });
+
+    saveRes = httpMocks.createResponse({eventEmitter: EventEmitter});
+    await waitForRouteHandlerCompletion(show, req, saveRes);
+    expect(saveRes.statusCode).toBe(404);
+  });
 });
