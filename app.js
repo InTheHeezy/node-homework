@@ -1,17 +1,29 @@
 const express = require("express");
 const notFound = require("./middleware/not-found");
 const errorHandler = require("./middleware/error-handler");
-const authMiddleware = require("./middleware/auth");
+const jwtMiddleware = require("./middleware/jwtMiddleware"); 
 const userRouter = require("./routes/userRoutes");
 const taskRouter = require("./routes/taskRoutes");
 const analyticsRouter = require("./routes/analyticsRoutes");
 const prisma = require("./db/prisma");
+const cookieParser = require("cookie-parser");
+const helmet = require("helmet");
+const { xss } = require("express-xss-sanitizer");
+const rateLimiter = require("express-rate-limit");
 
 const app = express();
 
-global.user_id = null;
-
+app.set("trust proxy", 1);
+app.use(helmet());
+app.use(
+  rateLimiter({
+    windowMs: 15 * 60 * 1000, // 15 minutes
+    max: 100, // limit each IP to 100 requests per windowMs
+  }),
+);
 app.use(express.json());
+app.use(cookieParser());
+app.use(xss());
 
 app.get("/health", async (req, res) => {
   try {
@@ -22,9 +34,9 @@ app.get("/health", async (req, res) => {
   }
 });
 
-app.use("/api/users", userRouter);
-app.use("/api/tasks", authMiddleware, taskRouter);
-app.use("/api/analytics", authMiddleware, analyticsRouter);
+app.use("/api/users", jwtMiddleware, userRouter);
+app.use("/api/tasks", jwtMiddleware, taskRouter);
+app.use("/api/analytics", jwtMiddleware, analyticsRouter);
 
 app.use(notFound);
 app.use(errorHandler);
@@ -50,6 +62,5 @@ const handleShutdown = async () => {
 };
 
 process.on("SIGINT", handleShutdown);
-//process.on("SIGTERM", handleShutdown); this is for cloud platforms
 
 module.exports = { app, server };
