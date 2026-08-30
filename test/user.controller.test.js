@@ -168,10 +168,29 @@ describe("Testing JWT middleware", () =>{
         if (!req.headers) {
             req.headers={};
         }
-        req.headers["X-CSRF-TOKEN"]= "goodtoken";
+        req.headers["X-CSRF-TOKEN"]= "goodToken";
 
         saveRes = httpMocks.createResponse({ eventEmitter: EventEmitter });
         await waitForRouteHandlerCompletion(jwtMiddleware, req, saveRes);
         expect(saveRes.statusCode).toBe(401);
+    });
+
+    it("64. Calls next() if both the token and the jwt are good", async () => {
+        const jwtCookie = jwt.sign({id:5, csrfToken: "goodToken"}, process.env.JWT_SECRET, {expiresIn: "1h"});
+        
+        const req = httpMocks.createRequest({
+            method: "POST"
+        });
+
+        req.cookies = { jwt: jwtCookie };
+
+        if (!req.headers) {
+            req.headers={};
+        }
+        req.headers["X-CSRF-TOKEN"]= "goodToken";
+
+        saveRes = httpMocks.createResponse({ eventEmitter: EventEmitter });
+        const next = await waitForRouteHandlerCompletion(jwtMiddleware, req, saveRes);
+        expect(next).toHaveBeenCalled();
     });
 });
