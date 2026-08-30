@@ -99,9 +99,7 @@ describe("task object validation tests", () => {
             { title: "TaskOne", isCompleted: "NotValid"},
             { abortEarly: false },
         );
-
-        expect(error).toBeUndefined(); 
-        
+        expect(error).toBeDefined(); 
         expect(
             error?.details?.find((detail) => detail.context.key == "isCompleted"),
         ).toBeDefined();
