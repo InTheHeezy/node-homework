@@ -134,3 +134,14 @@ describe("testing logon, register, and logoff", () => {
     expect(saveRes.statusCode).toBe(400);
    });
 });
+
+describe("Testing JWT middleware", () =>{
+    it("61. jwtMiddleware Returns a 401 if the JWT cookie is not present in the req", async () => {
+        const req = httpMocks.createRequest({
+            method: "GET",
+        });
+        saveRes = httpMocks.createResponse({ eventEmitter: EventEmitter });
+        await waitForRouteHandlerCompletion(jwtMiddleware, req, saveRes);
+        expect(saveRes.statusCode).toBe(401);
+    });
+});
