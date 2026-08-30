@@ -6,6 +6,7 @@ const httpMocks = require("node-mocks-http");
 const { register, logoff, logon } = require("../controllers/userController");
 const jwtMiddleware = require("../middleware/jwtMiddleware");
 const jwt = require("jsonwebtoken");
+const { EventEmitter } = require('events');
 
 // a few useful globals
 let saveRes = null;
