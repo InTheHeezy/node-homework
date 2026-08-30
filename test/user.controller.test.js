@@ -100,4 +100,10 @@ describe("testing logon, register, and logoff", () => {
     await waitForRouteHandlerCompletion(logoff, req, saveRes);
     expect(saveRes.statusCode).toBe(200);
    });
+
+   it("40. The logoff clears the cookie.", () => {
+    const setCookieArray = saveRes.get("Set-Cookie");
+    jwtCookie = setCookieArray.find((str) => str.startsWith("jwt="));
+    expect(jwtCookie).toContain("Jan 1970");
+   });
 });
