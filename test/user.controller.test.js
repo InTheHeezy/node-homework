@@ -81,6 +81,8 @@ describe("testing logon, register, and logoff", () => {
   });
 
    it("37. The returned data from the register has the expected name.", () => {
-    
+    expect(saveRes).toBeDefined();
+    const registerData = saveRes._getJSONData();
+    expect(registerData.name).toBe("Bob");
    });
 });
