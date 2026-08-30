@@ -59,4 +59,9 @@ describe("register a user ", () => {
     saveRes = await agent.post("/api/users/logoff").set("X-CSRF-TOKEN", loggedInCsrfToken);
     expect(saveRes.status).toBe(200);
   });
+
+  it("52. Make sure that you are really logged out: /api/tasks should now return a 401", async () => {
+    saveRes = await agent.get("/api/tasks");
+    expect(saveRes.status).toBe(401);
+  })
 })
