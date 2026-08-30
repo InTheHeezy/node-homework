@@ -106,4 +106,17 @@ describe("testing logon, register, and logoff", () => {
     jwtCookie = setCookieArray.find((str) => str.startsWith("jwt="));
     expect(jwtCookie).toContain("Jan 1970");
    });
+
+   it("41. A logon attempt with a bad password returns a 401", async () => {
+    const req = httpMocks.createRequest({
+        method: "POST",
+        body: {
+            email: "bob@sample.com",
+            password: "WrongPassword2"
+        }
+    });
+    saveRes = MockResponseWithCookies();
+    await waitForRouteHandlerCompletion(logon, req, saveRes);
+    expect(saveRes.statusCode).toBe(401);
+   });
 });
