@@ -60,5 +60,10 @@ describe("testing logon, register, and logoff", () => {
     saveRes = MockResponseWithCookies();
     await waitForRouteHandlerCompletion(logon, req, saveRes);
     expect(saveRes.statusCode).toBe(200); // success!
+
+    const setCookieArray = saveRes.get("Set-Cookie");
+    if (setCookieArray && setCookieArray.length > 0) {
+      jwtCookie = setCookieArray[0];
+    }
   });
 });
