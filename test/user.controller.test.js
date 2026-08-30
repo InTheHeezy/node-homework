@@ -91,4 +91,13 @@ describe("testing logon, register, and logoff", () => {
     const logonData = saveRes._getJSONData();
     expect(logonData.csrfToken).toBeDefined();
    });
+
+   it("39. You can now logoff", async () => {
+    const req = httpMocks.createRequest({
+        method: "POST"
+    });
+    saveRes = MockResponseWithCookies();
+    await waitForRouteHandlerCompletion(logoff, req, saveRes);
+    expect(saveRes.statusCode).toBe(200);
+   });
 });
