@@ -29,4 +29,8 @@ describe("register a user ", () => {
     saveRes = await agent.post("/api/users/register").send(newUser);
     expect(saveRes.status).toBe(201);
   });
+
+  it("47. Registration returns an object with the expected name", () => {
+    expect(saveRes.body.user.name).toBe("John Deere");
+  });
 })
