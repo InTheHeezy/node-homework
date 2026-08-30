@@ -82,7 +82,7 @@ describe("user object validation tests", () => {
 describe("task object validation tests", () => {
     it("8. The task schema requires a title", () => {
         const { error } = taskSchema.validate(
-            { isCompleted: "false", priority: "medium" },
+            { isCompleted: false, priority: "medium" },
             { abortEarly: false },
         );
         const titleError = error?.details?.find((detail) => detail.context.key === "title");
@@ -110,7 +110,7 @@ describe("task object validation tests", () => {
 
     it("11. If isCompleted in the provided object has the value true, it remains true after validation", () => {
         const { error, value } = taskSchema.validate(
-            { title: "TaskOne", isCompleted: "true", priority: "medium"},
+            { title: "TaskOne", isCompleted: true, priority: "medium"},
             { abortEarly: false },
         );
         expect(error).toBeFalsy();
