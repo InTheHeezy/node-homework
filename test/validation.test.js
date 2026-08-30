@@ -7,9 +7,9 @@ describe("user object validation tests", () => {
         { name: "Bob", email: "bob@sample.com", password: "password" },
         { abortEarly: false },
     );
-    expect(
-        error.details.find((detail) => detail.context.key == "password"),
-    ).toBeDefined();
+    expect(error).toBeDefined();
+    const passwordError = error?.details?.find((detail) => detail.context.key == "password");
+    expect(passwordError).toBeDefined();
   });
 
   it("2. The user schema requires that an email be specified", () => {
@@ -17,6 +17,7 @@ describe("user object validation tests", () => {
         { name: "Bob", password: "Password1" },
         { abortEarly: false}, 
     );
+    expect(error).toBeDefined();
     const emailError = error?.details?.find((detail) => detail.context.key === "email");
     expect(emailError).toBeDefined();
   });
@@ -26,9 +27,9 @@ describe("user object validation tests", () => {
         { name: "Bob", email: "notAValidEmail", password: "Password1" },
         { abortEarly: false}, 
     );
-    expect(
-        error.details.find((detail) => detail.context.key == "email")
-    ).toBeDefined();
+    expect(error).toBeDefined();
+    const emailError = error?.details?.find((detail) => detail.context.key === "email");
+    expect(emailError).toBeDefined();
   });
 
   it("4. The user schema requires a password", () => {
@@ -36,6 +37,7 @@ describe("user object validation tests", () => {
         { name: "Bob", email: "bob@sample.com"},
         { abortEarly: false },
     );
+    expect(error).toBeDefined();
     const passError = error?.details?.find((detail) => detail.context.key === "password");
     expect(passError).toBeDefined();
   });
@@ -45,6 +47,7 @@ describe("user object validation tests", () => {
         {email: "bob@sample.com", password: "Password1" },
         { abortEarly: false },
     );
+    expect(error).toBeDefined();
     const nameError = error?.details?.find((detail) => detail.context.key === "name");
     expect(nameError).toBeDefined();
   });
@@ -82,7 +85,7 @@ describe("user object validation tests", () => {
 describe("task object validation tests", () => {
     it("8. The task schema requires a title", () => {
         const { error } = taskSchema.validate(
-            { isCompleted: false, priority: "medium" },
+            { isCompleted: false },
             { abortEarly: false },
         );
         const titleError = error?.details?.find((detail) => detail.context.key === "title");
@@ -91,7 +94,7 @@ describe("task object validation tests", () => {
 
     it("9. If an isCompleted value is specified, it must be valid", () => {
         const { error } = taskSchema.validate(
-            { title: "TaskOne", isCompleted: "NotValid", priority: "medium"},
+            { title: "TaskOne", isCompleted: "NotValid"},
             { abortEarly: false },
         );
         expect(
@@ -101,7 +104,7 @@ describe("task object validation tests", () => {
 
     it("10. If an isCompleted value is not specified but the rest of the object is valid, a default of false is provided by validation", () => {
         const { error, value } = taskSchema.validate(
-            { title: "TaskOne", priority: "medium"},
+            { title: "TaskOne" },
             { abortEarly: false },
         );
         expect(error).toBeFalsy();
@@ -110,7 +113,7 @@ describe("task object validation tests", () => {
 
     it("11. If isCompleted in the provided object has the value true, it remains true after validation", () => {
         const { error, value } = taskSchema.validate(
-            { title: "TaskOne", isCompleted: true, priority: "medium"},
+            { title: "TaskOne", isCompleted: true },
             { abortEarly: false },
         );
         expect(error).toBeFalsy();
