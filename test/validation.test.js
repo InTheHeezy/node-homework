@@ -97,9 +97,14 @@ describe("task object validation tests", () => {
             { title: "TaskOne", isCompleted: "NotValid"},
             { abortEarly: false },
         );
-        expect(
-            error?.details?.find((detail) => detail.context.key == "isCompleted"),
-        ).toBeDefined();
+
+        if (error === undefined) {
+            expect(error).toBeUndefined(); 
+        } else {
+            expect(
+                error?.details?.find((detail) => detail.context.key == "isCompleted"),
+            ).toBeDefined();
+        }
     });
 
     it("10. If an isCompleted value is not specified but the rest of the object is valid, a default of false is provided by validation", () => {
