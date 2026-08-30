@@ -63,7 +63,15 @@ describe("testing logon, register, and logoff", () => {
 
     const setCookieArray = saveRes.get("Set-Cookie");
     if (setCookieArray && setCookieArray.length > 0) {
-      jwtCookie = setCookieArray[0];
+      jwtCookie = setCookieArray;
     }
+
+  });
+
+  it("35. A string in the cookie array starts with \"jwt=\"", () => {
+    expect(jwtCookie).toBeDefined();
+    expect(jwtCookie.length).toBeGreaterThan(0);
+    const hasJwtCookie = jwtCookie.some(cookieStr => cookieStr.startsWith("jwt="));
+    expect(hasJwtCookie).toBe(true);
   });
 });
