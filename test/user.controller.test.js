@@ -50,4 +50,14 @@ describe("testing logon, register, and logoff", () => {
     await waitForRouteHandlerCompletion(register, req, saveRes);
     expect(saveRes.statusCode).toBe(201); // success!
   });
+
+  it("34. The user can logon.", async () => {
+    const req = httpMocks.createRequest({
+      method: "POST",
+      body: { email: "bob@sample.com", password: "Pa$$word20" },
+    });
+    saveRes = MockResponseWithCookies();
+    await waitForRouteHandlerCompletion(logon, req, saveRes);
+    expect(saveRes.statusCode).toBe(200); // success!
+  });
 });
