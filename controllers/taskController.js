@@ -76,6 +76,10 @@ async function bulkCreate(req, res, next) {
 
 async function index(req, res) {
   
+  if (!req.user || !req.user.id) {
+    return res.status(401).json({ error: "Unauthorized: User ID is required" });
+  }
+
   const activeUserId = req.user.id;
   
   const page = parseInt(req.query.page) || 1;

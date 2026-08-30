@@ -100,11 +100,8 @@ describe("test getting created tasks", () => {
             method: "GET"
         })
         saveRes = httpMocks.createResponse({ eventEmitter: EventEmitter });
-        try {
-            await waitForRouteHandlerCompletion(index, req, saveRes);
-        } catch (e) {
-            expect(e.name).toBe("TypeError");
-        }
+        await waitForRouteHandlerCompletion(index, req, saveRes);
+        expect(saveRes.statusCode).toBe(401);
     });
 
     it("21. If you use user1's id on index() the call returns a 200 status.", async () => {
