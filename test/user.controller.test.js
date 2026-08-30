@@ -145,14 +145,33 @@ describe("Testing JWT middleware", () =>{
         expect(saveRes.statusCode).toBe(401);
     });
 
-    it("62. Returns a 401 if the JWT is invalid", async ()=>{
+    it("62. Returns a 401 if the JWT is invalid", async () => {
         const req = httpMocks.createRequest({
             method: "POST"
         })
         saveRes = MockResponseWithCookies();
         const jwtCookie = jwt.sign({id: 5, csrfToken: "badToken"}, "badSecret", { expiresIn: "1h" });
-        req.cookies = { jwt: jwtCookie }
+        req.cookies = { jwt: jwtCookie };
         await waitForRouteHandlerCompletion(jwtMiddleware,req,saveRes);
         expect(saveRes.statusCode).toBe(401);
-  });
+    });
+
+    it("63. Returns a 401 if the JWT is valid but the CSRF token isn't", async () => {
+        const jwtCookie = jwt.sign({id:5, csrfToken: "badToken"}, process.env.JWT_SECRET, {expiresIn: "1h"});
+        
+        const req = httpMocks.createRequest({
+            method: "POST"
+        });
+
+        req.cookies = { jwt: jwtCookie };
+
+        if (!req.headers) {
+            req.headers={};
+        }
+        req.headers["X-CSRF-TOKEN"]= "goodtoken";
+
+        saveRes = httpMocks.createResponse({ eventEmitter: EventEmitter });
+        await waitForRouteHandlerCompletion(jwtMiddleware, req, saveRes);
+        expect(saveRes.statusCode).toBe(401);
+    });
 });
