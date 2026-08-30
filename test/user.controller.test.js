@@ -85,4 +85,10 @@ describe("testing logon, register, and logoff", () => {
     const registerData = saveRes._getJSONData();
     expect(registerData.name).toBe("Bob");
    });
+
+   it("38. The returned data contains a csrfToken", () => {
+    expect(saveRes).toBeDefined();
+    const logonData = saveRes._getJSONData();
+    expect(logonData.csrfToken).toBeDefined();
+   });
 });
