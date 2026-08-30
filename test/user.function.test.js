@@ -46,4 +46,9 @@ describe("register a user ", () => {
     saveRes = await agent.post("/api/users/logon").send(loginInfo);
     expect(saveRes.status).toBe(200);
   });
+
+  it("50. Verify that you are logged in: /api/tasks should not return a 401", async () => {
+    saveRes = await agent.get("/api/tasks");
+    expect(saveRes.status).not.toBe(401);
+  });
 })
