@@ -37,4 +37,13 @@ describe("register a user ", () => {
   it("48. Test that the returned object includes a csrfToken", () => {
     expect(saveRes.body.csrfToken).toBeDefined();
   });
+
+  it("49. You can logon as the newly registered user", async () => {
+    const loginInfo = {
+        email: "jdeere@example.com",
+        password: "Pa$$word20",
+    };
+    saveRes = await agent.post("/api/users/logon").send(loginInfo);
+    expect(saveRes.status).toBe(200);
+  });
 })
