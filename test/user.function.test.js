@@ -33,4 +33,8 @@ describe("register a user ", () => {
   it("47. Registration returns an object with the expected name", () => {
     expect(saveRes.body.user.name).toBe("John Deere");
   });
+
+  it("48. Test that the returned object includes a csrfToken", () => {
+    expect(saveRes.body.csrfToken).toBeDefined();
+  });
 })
