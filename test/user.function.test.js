@@ -38,6 +38,7 @@ describe("register a user ", () => {
     expect(saveRes.body.csrfToken).toBeDefined();
   });
 
+  let loggedInCsrfToken;
   it("49. You can logon as the newly registered user", async () => {
     const loginInfo = {
         email: "jdeere@example.com",
@@ -45,10 +46,17 @@ describe("register a user ", () => {
     };
     saveRes = await agent.post("/api/users/logon").send(loginInfo);
     expect(saveRes.status).toBe(200);
+
+    loggedInCsrfToken = saveRes.body.csrfToken;
   });
 
   it("50. Verify that you are logged in: /api/tasks should not return a 401", async () => {
     saveRes = await agent.get("/api/tasks");
     expect(saveRes.status).not.toBe(401);
+  });
+
+  it("51. Verify that you can log out", async () => {
+    saveRes = await agent.post("/api/users/logoff").set("X-CSRF-TOKEN", loggedInCsrfToken);
+    expect(saveRes.status).toBe(200);
   });
 })
