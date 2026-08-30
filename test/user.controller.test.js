@@ -119,4 +119,18 @@ describe("testing logon, register, and logoff", () => {
     await waitForRouteHandlerCompletion(logon, req, saveRes);
     expect(saveRes.statusCode).toBe(401);
    });
+
+   it("42. You can't register with an email address that is already registered", async () => {
+    const req = httpMocks.createRequest({
+        method: "POST",
+        body: {
+            name: "Bob",
+            email: "bob@sample.com",
+            password: "Password1"
+        }
+    });
+    saveRes = MockResponseWithCookies();
+    await waitForRouteHandlerCompletion(register, req, saveRes);
+    expect(saveRes.statusCode).toBe(400);
+   });
 });
