@@ -144,4 +144,15 @@ describe("Testing JWT middleware", () =>{
         await waitForRouteHandlerCompletion(jwtMiddleware, req, saveRes);
         expect(saveRes.statusCode).toBe(401);
     });
+
+    it("62. Returns a 401 if the JWT is invalid", async ()=>{
+        const req = httpMocks.createRequest({
+            method: "POST"
+        })
+        saveRes = MockResponseWithCookies();
+        const jwtCookie = jwt.sign({id: 5, csrfToken: "badToken"}, "badSecret", { expiresIn: "1h" });
+        req.cookies = { jwt: jwtCookie }
+        await waitForRouteHandlerCompletion(jwtMiddleware,req,saveRes);
+        expect(saveRes.statusCode).toBe(401);
+  });
 });
