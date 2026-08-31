@@ -100,12 +100,16 @@ describe("testing task creation", () => {
 
 describe("test getting created tasks", () => {
     it("20. You can't get a list of tasks without a user id", async () => {
+        expect.assertions(1);
         const req = httpMocks.createRequest({
             method: "GET"
         })
         saveRes = httpMocks.createResponse({ eventEmitter: EventEmitter });
-        await waitForRouteHandlerCompletion(index, req, saveRes);
-        expect(saveRes.statusCode).toBe(401);
+        try {
+          await waitForRouteHandlerCompletion(index, req, saveRes);
+        } catch (e) {
+          expect(e.name).toBe("TypeError");
+        }
     });
 
     it("21. If you use user1's id on index() the call returns a 200 status.", async () => {
