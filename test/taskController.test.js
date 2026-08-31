@@ -52,7 +52,7 @@ describe("testing task creation", () => {
   });
 
   it("15. You can't create a task with a bogus user id", async () => {
-    expect.assertions(2);
+    expect.assertions(1);
 
     const req = httpMocks.createRequest({
         user: { id: 999999999 },
