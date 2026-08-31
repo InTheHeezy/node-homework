@@ -71,7 +71,6 @@ describe("user object validation tests", () => {
         { name: "Bob", email: "bob@sample.com", password: "Password1"},
         { abortEarly: false },
     );
-
     expect(error).toBeFalsy();
   });
 });
@@ -91,10 +90,10 @@ describe("task object validation tests", () => {
             { title: "TaskOne", isCompleted: "NotValid"},
             { abortEarly: false },
         );
-        expect(error).toBeDefined(); 
-        expect(
-            error?.details?.find((detail) => detail.context.key == "isCompleted"),
-        ).toBeDefined();
+        const isCompletedError = !!error?.details?.some(
+            (detail) => detail.context?.key === "isCompleted"
+        );
+        expect(isCompletedError).toBe(true);
     });
 
     it("10. If an isCompleted value is not specified but the rest of the object is valid, a default of false is provided by validation", () => {
