@@ -127,7 +127,6 @@ describe("patch task validation tests", () => {
             { title: "Updated Task Title" },
             { abortEarly: false },
         );
-        expect(error).toBeFalsy();
-        expect(value.isCompleted).toBeUndefined();
+        expect(error ? "Has Error" : value?.isCompleted).toBeUndefined();
     });
 });
