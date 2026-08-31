@@ -66,8 +66,6 @@ describe("user object validation tests", () => {
     expect(shortError && longError).toBe(true);
   });
 
-  
-
   it("7. If validation is performed on a valid user object, error comes back falsy", () => {
     const { error } = userSchema.validate(
         { name: "Bob", email: "bob@sample.com", password: "Password1"},
