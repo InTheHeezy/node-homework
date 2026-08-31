@@ -23,8 +23,8 @@ let saveTaskId = null;
 
 beforeAll(async () => {
   // clear database
-  await prisma.Task.deleteMany(); // delete all tasks
-  await prisma.User.deleteMany(); // delete all users
+  await prisma.task.deleteMany(); // delete all tasks
+  await prisma.user.deleteMany(); // delete all users
   user1 = await prisma.User.create({data: { name: "Bob", 
     email: "bob@sample.com", hashedPassword: "nonsense"}});
   user2 = await prisma.User.create({data: { name: "Alice", 
@@ -99,16 +99,12 @@ describe("testing task creation", () => {
 
 describe("test getting created tasks", () => {
     it("20. You can't get a list of tasks without a user id", async () => {
-        expect.assertions(1);
         const req = httpMocks.createRequest({
             method: "GET"
         })
         saveRes = httpMocks.createResponse({ eventEmitter: EventEmitter });
-        try {
-          await waitForRouteHandlerCompletion(index, req, saveRes);
-        } catch (e) {
-          expect(e.name).toBe("TypeError");
-        }
+        await waitForRouteHandlerCompletion(index, req, saveRes);
+        expect(saveRes.statusCode).toBe(401);
     });
 
     it("21. If you use user1's id on index() the call returns a 200 status.", async () => {
