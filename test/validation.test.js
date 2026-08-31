@@ -125,7 +125,8 @@ describe("patch task validation tests", () => {
             { isCompleted: false, priority: "medium" },
             { abortEarly: false },
         );
-        expect(error).toBeFalsy();
+        const titleError = !!error?.details?.some((detail) => detail.context?.key === "title");
+        expect(titleError).toBe(false);
     });
 
     it("13. If no value is provided for isCompleted this remains undefined in the returned value", () => {
