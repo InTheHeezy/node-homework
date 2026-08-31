@@ -62,12 +62,9 @@ describe("testing logon, register, and logoff", () => {
     expect(saveRes.statusCode).toBe(200); // success!
 
     const setCookieArray = saveRes.get("Set-Cookie");
-    //console.log("set cookie array?:", Array.isArray(setCookieArray));
-    //console.log("Inside set cookie:", setCookieArray);
     if (setCookieArray && setCookieArray.length > 0) {
       jwtCookie = String(setCookieArray);
     }
-    //console.log("big jwtCookie string:", jwtCookie);
   });
 
   it("35. A string in the cookie array starts with \"jwt=\"", () => {
