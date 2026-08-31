@@ -75,7 +75,10 @@ async function bulkCreate(req, res, next) {
 } 
 
 async function index(req, res) {
-  
+  if (!req.user || !req.user.id) {
+    return res.status(401).json({ message: "Unauthorized: User ID is required" });
+  }
+
   const activeUserId = req.user.id;
   
   const page = parseInt(req.query.page) || 1;
@@ -131,6 +134,10 @@ async function index(req, res) {
     orderBy: getOrderBy(req.query)
   });
 
+  if (tasks.length === 0) {
+    return res.status(404).json({ error: "Tasks not found" });
+  }
+
   const totalTasks = await prisma.task.count({
     where: whereClause
   });
@@ -161,13 +168,13 @@ async function show(req, res, next) {
     const task = await prisma.task.findUnique({
       where: {
           id: taskId,
-          userId: activeUserId
       },
       select: {
         id: true,
         title: true,
         isCompleted: true,
         priority: true,
+        userId: true,
         User: {
           select: {
             name: true,
@@ -176,6 +183,13 @@ async function show(req, res, next) {
         }
       }
     });
+
+    if (!task || task.userId !== activeUserId) {
+      return res.status(404).json({ message: "The task was not found." });
+    }
+
+    delete task.userId;
+
     return res.status(200).json(task);
   } catch (err) {
     if (err.code === "P2025" ) {
@@ -206,8 +220,8 @@ async function update(req, res, next) {
     const updatedTask = await prisma.task.update({
       data: updateData,
       where: {
-            id: taskId,
-            userId: activeUserId
+        id: taskId,
+        userId: activeUserId
       },
       select: { 
         id: true, 
@@ -221,7 +235,7 @@ async function update(req, res, next) {
     if (err.code === "P2025" ) {
       return res.status(404).json({ message: "The task was not found."})
     } else {
-      return next(err); // pass other errors to the global error handler
+      return next(err); 
     }
   }
 }
@@ -250,7 +264,7 @@ async function deleteTask(req, res, next) {
     if (err.code === "P2025" ) {
       return res.status(404).json({ message: "The task was not found."})
     } else {
-      return next(err); // pass other errors to the global error handler
+      return next(err); 
     }
   }
 }
