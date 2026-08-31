@@ -101,7 +101,10 @@ describe("task object validation tests", () => {
             { title: "TaskOne" },
             { abortEarly: false },
         );
-        expect(error ? "Has Error" : value?.isCompleted).toBe(false);
+        expect({ error, isCompleted: value?.isCompleted }).toEqual({
+            error: undefined,
+            isCompleted: false
+        });
     });
 
     it("11. If isCompleted in the provided object has the value true, it remains true after validation", () => {
@@ -109,7 +112,10 @@ describe("task object validation tests", () => {
             { title: "TaskOne", isCompleted: true },
             { abortEarly: false },
         );
-        expect(error ? "Has Error" : value?.isCompleted).toBe(true);
+        expect({ error, isCompleted: value?.isCompleted }).toEqual({
+            error: undefined,
+            isCompleted: true
+        });
     });
 });
 
