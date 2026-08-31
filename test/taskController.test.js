@@ -37,6 +37,8 @@ afterAll(() => {
 
 describe("testing task creation", () => {
    it("14. cant create a task without a user id", async () => {
+    expect.assertions(1);
+
     const req = httpMocks.createRequest({
         method: "POST",
         body: { title: "first task" },
@@ -50,6 +52,8 @@ describe("testing task creation", () => {
   });
 
   it("15. You can't create a task with a bogus user id", async () => {
+    expect.assertions(2);
+
     const req = httpMocks.createRequest({
         user: { id: 999999999 },
         method: "POST",
@@ -78,19 +82,19 @@ describe("testing task creation", () => {
   });
 
   it("17. The object returned from the create() call has the expected title", () => {
-    saveData = saveRes._getJSONData();
-    expect(saveData.title).toBe("first task");
+    const data = saveRes._getJSONData();
+    expect(data.title).toBe("first task");
   });
 
   it("18. The object has the right value for isCompleted", () => {
-    saveData = saveRes._getJSONData();
-    expect(saveData.isCompleted).toBe(false);
+    const data = saveRes._getJSONData();
+    expect(data.isCompleted).toBe(false);
   });
 
   it("19. The object does not have any value for userId", () => {
-    saveData = saveRes._getJSONData();
-    expect(saveData.userId).toBeUndefined();
-    saveTaskId = saveData.id;
+    const data = saveRes._getJSONData();
+    expect(data.userId).toBeUndefined();
+    saveTaskId = data.id;
   });
 })
 
