@@ -109,8 +109,7 @@ describe("task object validation tests", () => {
             { title: "TaskOne", isCompleted: true },
             { abortEarly: false },
         );
-        expect(error).toBeFalsy();
-        expect(value.isCompleted).toBe(true);
+        expect(error ? "Has Error" : value?.isCompleted).toBe(true);
     });
 });
 
