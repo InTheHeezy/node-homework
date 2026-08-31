@@ -92,8 +92,8 @@ describe("testing task creation", () => {
 
   it("19. The object does not have any value for userId", () => {
     const data = saveRes._getJSONData();
-    expect(data.userId).toBeUndefined();
     saveTaskId = data.id;
+    expect(data.userId).toBeUndefined();
   });
 })
 
