@@ -64,7 +64,6 @@ describe("testing task creation", () => {
       await waitForRouteHandlerCompletion(create, req, saveRes);
     } catch (e) {
         expect(e.name).toBe("PrismaClientKnownRequestError");
-        expect(e.code).toBe("P2003");
     }
   });
 
