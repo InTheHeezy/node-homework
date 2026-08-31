@@ -122,7 +122,7 @@ describe("task object validation tests", () => {
 describe("patch task validation tests", () => {
     it("12. The patchTaskSchema does not require a title", () => {
         const { error } = patchTaskSchema.validate(
-            { isCompleted: false, priority: "medium" },
+            { isCompleted: false },
             { abortEarly: false },
         );
         const titleError = !!error?.details?.some((detail) => detail.context?.key === "title");
