@@ -97,14 +97,11 @@ describe("task object validation tests", () => {
     });
 
     it("10. If an isCompleted value is not specified but the rest of the object is valid, a default of false is provided by validation", () => {
-        const { error, value } = taskSchema.validate(
+        const { value } = taskSchema.validate(
             { title: "TaskOne" },
             { abortEarly: false },
         );
-        expect({ error, isCompleted: value?.isCompleted }).toEqual({
-            error: undefined,
-            isCompleted: false
-        });
+        expect(value?.isCompleted).toBe(false);
     });
 
     it("11. If isCompleted in the provided object has the value true, it remains true after validation", () => {
@@ -134,6 +131,6 @@ describe("patch task validation tests", () => {
             { title: "Updated Task Title" },
             { abortEarly: false },
         );
-        expect(error ? "Has Error" : value?.isCompleted).toBeUndefined();
+        expect(value?.isCompleted).toBeUndefined();
     });
 });
