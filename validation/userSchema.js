@@ -6,7 +6,7 @@ const userSchema = Joi.object({
   password: Joi.string()
     .min(8)
     .max(100)
-    .pattern(new RegExp('^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])')) 
+    .pattern(/^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])/) 
     .message('Password must contain at least one uppercase letter, one lowercase letter, and one number')
     .required()
 });
