@@ -8,7 +8,7 @@ const send401 = (res) => {
 };
 
 module.exports = async (req, res, next) => {
-  const publicPaths = ["/register", "/logon"];
+  const publicPaths = ["/register", "/logon", "/googleLogon"];
 
   if (publicPaths.includes(req.path)) {
     return next();
