@@ -8,11 +8,7 @@ const oAuth2Client = new OAuth2Client(
 );
 
 class GoogleAuth {
-  /**
-   * Exchanges an authorization code for verified Google user profile data.
-   * @param {string} authorizationCode 
-   * @returns {Promise<object>} The verified user payload
-   */
+  
   static async verifyCode(authorizationCode) {
 
     const { tokens } = await oAuth2Client.getToken(authorizationCode);
