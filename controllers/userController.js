@@ -5,6 +5,7 @@ const scrypt = util.promisify(crypto.scrypt);
 const prisma = require("../db/prisma");
 const { randomUUID } = require("crypto");
 const jwt = require("jsonwebtoken");
+const GoogleAuth = require("../class-utils/googleAuth");
 
 async function hashPassword(password) {
   const salt = crypto.randomBytes(16).toString("hex");
@@ -35,6 +36,74 @@ const setJwtCookie = (req, res, user) => {
   res.cookie("jwt", token, { ...cookieFlags(req), maxAge: 3600000 }); // 1 hour expiration
   return payload.csrfToken; // this is needed in the body returned by logon() or register()
 };
+
+async function googleLogon(req, res, next) {
+    try {
+        const { authorizationCode } = req.body;
+
+        if (!authorizationCode) {
+            return res.status(400).json({ message: "Authorization code is required" });
+        }
+
+        const googleUser = await GoogleAuth.verifyCode(authorizationCode);
+        const cleanEmail = googleUser.email.toLowerCase();
+
+        let user = await prisma.user.findUnique({
+            where: { email : cleanEmail },
+            select: { id: true, name: true, email: true }
+        });
+        let welcomeTasks = [];
+        if(!user) {
+            const randomPassword = crypto.randomBytes(32).toString("hex");
+            const hashedPassword = await hashPassword(randomPassword);
+
+            const result = await prisma.$transaction(async (tx) => {
+                const newUser = await tx.user.create({
+                    data: {
+                        name: googleUser.name,
+                        email: cleanEmail,
+                        hashedPassword: hashedPassword
+                    },
+                    select: { id: true, name: true, email: true }
+                });
+                const welcomeTaskData = [
+                    { title: "Complete your profile", userId: newUser.id, priority: "medium" },
+                    { title: "Add your first task", userId: newUser.id, priority: "high" },
+                    { title: "Explore the app", userId: newUser.id, priority: "low" }
+                ];
+                await tx.task.createMany({ data: welcomeTaskData });
+
+                const welcomeTasks = await tx.task.findMany({
+                    where: {
+                        userId: newUser.id,
+                        title: { in: welcomeTaskData.map(t => t.title)}
+                    },
+                    select: {
+                        id: true,
+                        title: true,
+                        isCompleted: true,
+                        userId: true,
+                        priority: true
+                    }
+                });
+                return { user: newUser, welcomeTasks };
+            });
+            user = result.user;
+            welcomeTasks = result.welcomeTasks;
+        } 
+        const csrfToken = setJwtCookie(req, res, user);
+
+        return res.status(200).json({
+        name: user.name,
+        email: user.email,
+        csrfToken: csrfToken,
+        ...(welcomeTasks.length > 0 && { welcomeTasks }) 
+        });
+    } catch(error) {
+        console.error("Google authentication error:", error);
+        return res.status(401).json({ message: "Google authentication failed" });
+    }
+}
 
 async function register(req, res, next) {
     
@@ -229,6 +298,7 @@ async function show(req, res) {
 }
 
 module.exports = {
+  googleLogon,
   register, 
   logon,
   logoff,
