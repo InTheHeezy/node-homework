@@ -39,7 +39,9 @@ const setJwtCookie = (req, res, user) => {
 
 async function googleLogon(req, res, next) {
     try {
-        const { authorizationCode } = req.body;
+        console.log("[Controller Execute] Body payload parsed:", req.body);
+
+        const authorizationCode = req.body?.authorizationCode || req.body?.authorization_code || req.body?.code;
 
         if (!authorizationCode) {
             return res.status(400).json({ message: "Authorization code is required" });
