@@ -39,8 +39,6 @@ const setJwtCookie = (req, res, user) => {
 
 async function googleLogon(req, res, next) {
     try {
-        console.log("[Controller Execute] Body payload parsed:", req.body);
-
         const authorizationCode = req.body?.authorizationCode || req.body?.authorization_code || req.body?.code;
 
         if (!authorizationCode) {
@@ -54,8 +52,10 @@ async function googleLogon(req, res, next) {
             where: { email : cleanEmail },
             select: { id: true, name: true, email: true }
         });
+
         let welcomeTasks = [];
-        if(!user) {
+
+        if (!user) {
             const randomPassword = crypto.randomBytes(32).toString("hex");
             const hashedPassword = await hashPassword(randomPassword);
 
@@ -68,6 +68,7 @@ async function googleLogon(req, res, next) {
                     },
                     select: { id: true, name: true, email: true }
                 });
+                
                 const welcomeTaskData = [
                     { title: "Complete your profile", userId: newUser.id, priority: "medium" },
                     { title: "Add your first task", userId: newUser.id, priority: "high" },
@@ -75,34 +76,30 @@ async function googleLogon(req, res, next) {
                 ];
                 await tx.task.createMany({ data: welcomeTaskData });
 
-                const welcomeTasks = await tx.task.findMany({
+                const createdTasks = await tx.task.findMany({
                     where: {
                         userId: newUser.id,
                         title: { in: welcomeTaskData.map(t => t.title)}
                     },
-                    select: {
-                        id: true,
-                        title: true,
-                        isCompleted: true,
-                        userId: true,
-                        priority: true
-                    }
+                    select: { id: true, title: true, isCompleted: true, userId: true, priority: true }
                 });
-                return { user: newUser, welcomeTasks };
+
+                return { user: newUser, welcomeTasks: createdTasks };
             });
+
             user = result.user;
             welcomeTasks = result.welcomeTasks;
         } 
         const csrfToken = setJwtCookie(req, res, user);
 
         return res.status(200).json({
-        name: user.name,
-        email: user.email,
-        csrfToken: csrfToken,
-        ...(welcomeTasks.length > 0 && { welcomeTasks }) 
+            name: user.name,
+            email: user.email,
+            csrfToken: csrfToken,
+            ...(welcomeTasks.length > 0 && { welcomeTasks }) 
         });
     } catch(error) {
-        console.error("Google authentication error:", error);
+        console.error("Google authentication error:", error.message || error);
         return res.status(401).json({ message: "Google authentication failed" });
     }
 }
