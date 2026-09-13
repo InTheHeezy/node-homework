@@ -103,17 +103,6 @@ async function googleLogon(req, res, next) {
         });
     } catch(error) {
         console.error("Google authentication error:", error);
-
-
-        console.error("💥 [Controller Fatal Error] Google authentication trace failed entirely.");
-        
-        // 🟢 ADD THIS EXTENDED LOG BLOCK TO EXTRACT GOOGLE'S ERROR STRING:
-        if (error.response && error.response.data) {
-            console.error("❌ Google API Error Details:", JSON.stringify(error.response.data, null, 2));
-        } else {
-            console.error("❌ JavaScript Error Stack:", error.message || error);
-        }
-
         return res.status(401).json({ message: "Google authentication failed" });
     }
 }
