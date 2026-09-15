@@ -1,1 +1,8 @@
 VITE_TARGET="https://node-homework-67.onrender.com"
+
+I have added oAuth to this project. I added a file in the class-utils folder called "googleAuth". 
+This is a helper class file that verifies authorization codes and returns basic gmail information.
+
+Because of oAuth I needed to modify the files userController, userRoutes, and app.
+The original logon route requires a password to login, which oAuth does not provide,
+so a new googleLogon function was made inside userController.
